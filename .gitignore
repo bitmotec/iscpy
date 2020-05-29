@@ -1,3 +1,29 @@
+# Ignore python build cache
+*/__pycache__/*
+*/__pycache__
+*.pyc
+
+# Ignore temporary files
+*.tmp
+
+# Ignore local project settings
+/.project
+/.pydevproject
+/.settings
+/.idea
+
+# Ignore setting files
+*.conf
+*.ini
+
+# Ignore cache folder
+/.cache
+
+# Ignore virtual environments
+/.venv
+
+# Ignore binaries and build folders
 build/*
 dist/*
-iscpy.egg-info/*
+*.egg-info/*
+*.bin
