@@ -280,28 +280,28 @@ def ParseISCString(isc_string):
     return ParseTokens(Explode(ScrubComments(isc_string)))
 
 def Serialize(isc_string):
-    """Makes a pickled string of a dict from an ISC file string
+    """Makes a pickled byte string of a dict from an ISC file string
     
     Inputs:
         isc_string: string of an isc file
     
     Outputs:
-        serialized_isc: serialized string of isc dict
+        serialized_isc: serialized byte string of isc dict
     """
     
-    return u'%s' % pickle.dumps(ParseISCString(isc_string))
+    return pickle.dumps(ParseISCString(isc_string))
 
-def Deserialize(serialized_string):
+def Deserialize(serialized_byte_string):
     """Makes an iscpy dict from a serliazed ISC dict
     
     Inputs:
-        isc_string: string of an isc file
+        serialized_byte_string: serialized byte string of isc dict
     
     Outputs:
         deserialized_isc: unserialized dict of serialized isc dict
     """
     
-    return u'%s' % MakeISC(pickle.loads(str(serialized_string)))
+    return MakeISC(pickle.loads(serialized_byte_string))
 
 def AddZone(json_zone, isc_dict):
     """Add zone to named config
