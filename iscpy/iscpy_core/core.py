@@ -61,6 +61,7 @@ def ParseTokens(char_list):
     last_open = None
     continuous_line = False
     temp_list = []
+    key = 0
 
     while index < len(new_char_list):
         if new_char_list[index] == '{':
