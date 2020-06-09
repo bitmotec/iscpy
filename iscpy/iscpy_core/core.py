@@ -29,8 +29,6 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-from builtins import str
-from builtins import next
 import copy
 import pickle
 
