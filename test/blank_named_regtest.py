@@ -51,42 +51,52 @@ NAMED_FILE = 'test_data/named.example.conf'
 
 class TestNamedImport(unittest.TestCase):
 
-  def setUp(self):
-    self.named_file = (
-        'include "/home/jcollins/roster-dns-management/test/test_data/rndc.key";'
-        'options { pid-file "test_data/named.pid";};\n'
-        'controls { inet 127.0.0.1 port 35638 allow{localhost;} keys {rndc-key;};};')
-    self.maxDiff = None
+    def setUp(self):
+        self.named_file = (
+            'include "/home/jcollins/roster-dns-management/test/test_data/rndc.key";'
+            'options { pid-file "test_data/named.pid";};\n'
+            'controls { inet 127.0.0.1 port 35638 allow{localhost;} keys {rndc-key;};};'
+            )
+        self.maxDiff = None
 
-  def testSingleOption(self):
-    test_string = (
-        u'single-option;\n'
-        u'boolean-option yes;\n'
-        u'list-option { a; b; };\n'
-        u'options {};\n')
+    def testSingleOption(self):
+        test_string = (
+            u'single-option;\n'
+            u'boolean-option yes;\n'
+            u'list-option { a; b; };\n'
+            u'options {};\n'
+            )
 
-    self.assertEqual(iscpy.Deserialize(iscpy.Serialize(test_string)),
-        u'single-option ;\n'
-        u'boolean-option yes;\n'
-        u'options {  };\n'
-        u'list-option { a;\n'
-        u'b; };')
+        self.assertEqual(
+            iscpy.Deserialize(iscpy.Serialize(test_string)),
+            u'single-option ;\n'
+            u'boolean-option yes;\n'
+            u'options {  };\n'
+            u'list-option { a;\n'
+            u'b; };'
+            )
 
-  def testParse(self):
-    self.assertEqual(iscpy.Explode(iscpy.ScrubComments(self.named_file)),
-        ['include "/home/jcollins/roster-dns-management/test/test_data/rndc.key"',
-         ';', 'options', '{', 'pid-file "test_data/named.pid"', ';', '}', ';',
-         'controls', '{', 'inet 127.0.0.1 port 35638 allow', '{', 'localhost',
-         ';', '}', 'keys', '{', 'rndc-key', ';', '}', ';', '}', ';'])
-    self.assertEqual(iscpy.ParseISCString(self.named_file),
-        {'include': '"/home/jcollins/roster-dns-management/test/test_data/rndc.key"',
-         'options': {'pid-file': '"test_data/named.pid"'},
-         'controls': [{'inet 127.0.0.1 port 35638 allow': {'localhost': True}},
-                      {'keys': {'rndc-key': True}}]})
-    self.assertEqual(iscpy.MakeISC(iscpy.ParseISCString(self.named_file)),
-        'include "/home/jcollins/roster-dns-management/test/test_data/rndc.key";\n'
-        'options { pid-file "test_data/named.pid"; };\n'
-        'controls { inet 127.0.0.1 port 35638 allow { localhost; } keys { rndc-key; }; };')
+    def testParse(self):
+        self.assertEqual(
+            iscpy.Explode(iscpy.ScrubComments(self.named_file)),
+            ['include "/home/jcollins/roster-dns-management/test/test_data/rndc.key"',
+             ';', 'options', '{', 'pid-file "test_data/named.pid"', ';', '}', ';',
+             'controls', '{', 'inet 127.0.0.1 port 35638 allow', '{', 'localhost',
+             ';', '}', 'keys', '{', 'rndc-key', ';', '}', ';', '}', ';']
+            )
+        self.assertEqual(
+            iscpy.ParseISCString(self.named_file),
+            {'include': '"/home/jcollins/roster-dns-management/test/test_data/rndc.key"',
+             'options': {'pid-file': '"test_data/named.pid"'},
+             'controls': [{'inet 127.0.0.1 port 35638 allow': {'localhost': True}},
+                          {'keys': {'rndc-key': True}}]}
+            )
+        self.assertEqual(
+            iscpy.MakeISC(iscpy.ParseISCString(self.named_file)),
+            'include "/home/jcollins/roster-dns-management/test/test_data/rndc.key";\n'
+            'options { pid-file "test_data/named.pid"; };\n'
+            'controls { inet 127.0.0.1 port 35638 allow { localhost; } keys { rndc-key; }; };'
+            )
 
-if( __name__ == '__main__' ):
-  unittest.main()
+if __name__ == '__main__':
+    unittest.main()
