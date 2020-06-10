@@ -2,21 +2,21 @@
 
 # Copyright (c) 2009, Purdue University
 # All rights reserved.
-#
+# 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-#
+# 
 # Redistributions of source code must retain the above copyright notice, this
 # list of conditions and the following disclaimer.
 #
 # Redistributions in binary form must reproduce the above copyright notice, this
 # list of conditions and the following disclaimer in the documentation and/or
 # other materials provided with the distribution.
-#
+# 
 # Neither the name of the Purdue University nor the names of its contributors
 # may be used to endorse or promote products derived from this software without
 # specific prior written permission.
-#
+# 
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -47,7 +47,62 @@ import iscpy
 NAMED_FILE = 'test_data/named.example.conf'
 
 
-class TestNamedImport(unittest.TestCase):
+class TestCreationFromStrings(unittest.TestCase):
+
+    def setUp(self):
+        self.named_file = (
+            'include "/home/jcollins/roster-dns-management/test/test_data/rndc.key";'
+            'options { pid-file "test_data/named.pid";};\n'
+            'controls { inet 127.0.0.1 port 35638 allow{localhost;} keys {rndc-key;};};'
+            )
+        self.maxDiff = None
+
+    def testSingleOption(self):
+        test_string = (
+            u'single-option;\n'
+            u'boolean-option yes;\n'
+            u'options {};\n'
+            u'list-option { a; b; };\n'
+            )
+
+        self.assertEqual(
+            iscpy.Deserialize(iscpy.Serialize(test_string)),
+            u'single-option ;\n'
+            u'boolean-option yes;\n'
+            u'options {  };\n'
+            u'list-option { a;\n'
+            u'b; };'
+            )
+
+    def testParse(self):
+        self.assertEqual(
+            iscpy.Explode(iscpy.ScrubComments(self.named_file)),
+            ['include "/home/jcollins/roster-dns-management/test/test_data/rndc.key"',
+             ';', 'options', '{', 'pid-file "test_data/named.pid"', ';', '}', ';',
+             'controls', '{', 'inet 127.0.0.1 port 35638 allow', '{', 'localhost',
+             ';', '}', 'keys', '{', 'rndc-key', ';', '}', ';', '}', ';']
+            )
+        self.assertEqual(
+            iscpy.ParseISCString(self.named_file),
+            {
+                'include': '"/home/jcollins/roster-dns-management/test/test_data/rndc.key"',
+                'options': {'pid-file': '"test_data/named.pid"'},
+                'controls':
+                    [
+                        {'inet 127.0.0.1 port 35638 allow': {'localhost': True}},
+                        {'keys': {'rndc-key': True}}
+                    ]
+            }
+            )
+        self.assertEqual(
+            iscpy.MakeISC(iscpy.ParseISCString(self.named_file)),
+            'include "/home/jcollins/roster-dns-management/test/test_data/rndc.key";\n'
+            'options { pid-file "test_data/named.pid"; };\n'
+            'controls { inet 127.0.0.1 port 35638 allow { localhost; } keys { rndc-key; }; };'
+            )
+
+
+class TestParsingFromFile(unittest.TestCase):
 
     def setUp(self): 
         with open(NAMED_FILE) as fp:
@@ -268,6 +323,15 @@ class TestNamedImport(unittest.TestCase):
             }
             )
 
+class TestGenerateFileContent(unittest.TestCase):
+
+    def setUp(self): 
+        with open(NAMED_FILE) as fp:
+            self.named_file = fp.read()
+        
+        # Set maxDiff to None in order to display differences    
+        self.maxDiff = None
+
     def testMakeNamedHeader(self):
         self.assertEqual(
             iscpy.dns.DumpNamedHeader(iscpy.dns.MakeNamedDict(self.named_file)),
@@ -363,6 +427,7 @@ class TestNamedImport(unittest.TestCase):
                                     'additional-from-auth no;'}
             }
             )
+
 
 if __name__ == '__main__':
     unittest.main()
