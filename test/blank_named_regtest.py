@@ -37,12 +37,10 @@ DO NOT EVER RUN THIS TEST AGAINST A PRODUCTION DATABASE.
 
 __copyright__ = 'Copyright (C) 2009, Purdue University'
 __license__ = 'BSD'
-__version__ = '1.05'
+__version__ = '1.18.1'
 
 
 import unittest
-import os
-
 import iscpy
 
 
@@ -63,8 +61,8 @@ class TestNamedImport(unittest.TestCase):
         test_string = (
             u'single-option;\n'
             u'boolean-option yes;\n'
-            u'list-option { a; b; };\n'
             u'options {};\n'
+            u'list-option { a; b; };\n'
             )
 
         self.assertEqual(
@@ -86,10 +84,15 @@ class TestNamedImport(unittest.TestCase):
             )
         self.assertEqual(
             iscpy.ParseISCString(self.named_file),
-            {'include': '"/home/jcollins/roster-dns-management/test/test_data/rndc.key"',
-             'options': {'pid-file': '"test_data/named.pid"'},
-             'controls': [{'inet 127.0.0.1 port 35638 allow': {'localhost': True}},
-                          {'keys': {'rndc-key': True}}]}
+            {
+                'include': '"/home/jcollins/roster-dns-management/test/test_data/rndc.key"',
+                'options': {'pid-file': '"test_data/named.pid"'},
+                'controls':
+                    [
+                        {'inet 127.0.0.1 port 35638 allow': {'localhost': True}},
+                        {'keys': {'rndc-key': True}}
+                    ]
+            }
             )
         self.assertEqual(
             iscpy.MakeISC(iscpy.ParseISCString(self.named_file)),

@@ -37,12 +37,10 @@ DO NOT EVER RUN THIS TEST AGAINST A PRODUCTION DATABASE.
 
 __copyright__ = 'Copyright (C) 2009, Purdue University'
 __license__ = 'BSD'
-__version__ = '1.05'
+__version__ = '1.18.1'
 
 
 import unittest
-import os
-
 import iscpy
 
 
@@ -51,8 +49,11 @@ NAMED_FILE = 'test_data/named.example.conf'
 
 class TestNamedImport(unittest.TestCase):
 
-    def setUp(self):
-        self.named_file = open(NAMED_FILE).read()
+    def setUp(self): 
+        with open(NAMED_FILE) as fp:
+            self.named_file = fp.read()
+        
+        # Set maxDiff to None in order to display differences    
         self.maxDiff = None
 
     def testScrubComments01(self):
@@ -64,7 +65,7 @@ class TestNamedImport(unittest.TestCase):
     def testScrubComments03(self):
         self.assertEqual(iscpy.ScrubComments("/*\n*\n*\n*/foobar"), "foobar")
 
-    def testScrubComments(self):
+    def testScrubComments04(self):
         self.assertEqual(
             iscpy.ScrubComments(self.named_file),
             'options {\ndirectory "/var/domain";\nrecursion yes;\n'
@@ -211,8 +212,7 @@ class TestNamedImport(unittest.TestCase):
         self.assertEqual(
             iscpy.dns.MakeNamedDict(self.named_file),
             {
-                'acls': {'admin': ['192.168.1.2/32', '192.168.1.4/32',
-                                   '192.168.0.0/16'],
+                'acls': {'admin': ['192.168.0.0/16', '192.168.1.2/32', '192.168.1.4/32'],
                          'control-hosts': ['127.0.0.1/32', '192.168.1.3/32']},
                 'options': {'include': '"/etc/rndc.key"',
                             'logging': {'category "update-security"':
@@ -268,6 +268,78 @@ class TestNamedImport(unittest.TestCase):
             }
             )
 
+    def testMakeNamedHeader(self):
+        self.assertEqual(
+            iscpy.dns.DumpNamedHeader(iscpy.dns.MakeNamedDict(self.named_file)),
+            'include "/etc/rndc.key";\n'
+            'logging { category "update-security" { "security"; };\n'
+                      'category "queries" { "query_logging"; };\n'
+                      'channel "query_logging" { syslog local5;\nseverity info; };\n'
+                      'category "client" { "null"; };\n'
+                      'channel "security" { file "/var/log/named-security.log" '
+                                           'versions 10 size 10m;\nprint-time '
+                                           'yes; }; };\n'
+            'options { directory "/var/domain";\nrecursion yes;\n'
+                      'allow-query { any; };\nmax-cache-size 512M; };\n'
+            'controls { inet * allow { control-hosts; } keys { rndc-key; }; '
+            '};'
+            )
+
+    def testMakeISC(self):
+        dicTest = {
+            'new_stanza': {'test': True},
+            'level1': {'level2': {'level3': {'level4': {'test1': True, 'test2': True, 'test3': True}}}},
+            'newarg': 'newval'
+            }
+        strTarget = \
+            'new_stanza { test; };\n' \
+            'level1 { level2 { level3 { level4 { test1;\n' \
+                                                'test2;\n' \
+                                                'test3; }; }; }; };\n' \
+            'newarg newval;'
+        strTest = iscpy.MakeISC(dicTest)
+        self.assertEqual(strTest, strTarget)
+        
+        strTest = iscpy.MakeISC(iscpy.ParseISCString(self.named_file))
+        strTarget = \
+            'options { directory "/var/domain";\nrecursion yes;\nallow-query { any; };\nmax-cache-size 512M; };\n' \
+            'logging { ' \
+            'channel "security" { file "/var/log/named-security.log" versions 10 size 10m;\nprint-time yes; };\n' \
+            'channel "query_logging" { syslog local5;\nseverity info; };\n' \
+            'category "client" { "null"; };\n' \
+            'category "update-security" { "security"; };\n' \
+            'category "queries" { "query_logging"; }; ' \
+            '};\n' \
+            'controls { inet * allow { control-hosts; } keys { rndc-key; }; };\n' \
+            'include "/etc/rndc.key";\n' \
+            'acl control-hosts { 127.0.0.1/32;\n192.168.1.3/32; };\n' \
+            'acl admin { 192.168.0.0/16;\n192.168.1.2/32;\n192.168.1.4/32; };\n' \
+            'view "unauthorized" { ' \
+            'recursion no;\nmatch-clients { network-unauthorized; };\n' \
+            'additional-from-auth no;\nadditional-from-cache no;\n' \
+            'zone "0.0.127.in-addr.arpa" { ' \
+            'type slave;\nfile "test_data/university.rev.bak";\nmasters { 192.168.1.3; }; ' \
+            '};\n' \
+            'zone "1.210.128.in-addr.arpa" { ' \
+            'type master;\nfile "test_data/test_reverse_zone.db";\nallow-query { network-unauthorized; }; ' \
+            '};\n' \
+            'zone "." { type hint;\nfile "named.ca"; }; ' \
+            '};\n' \
+            'view "authorized" { ' \
+            'recursion yes;\nmatch-clients { network-authorized; };\n' \
+            'allow-recursion { network-authorized; };\nallow-query-cache { network-authorized; };\n' \
+            'additional-from-auth yes;\nadditional-from-cache yes;\n' \
+            'zone "university.edu" { ' \
+            'type slave;\nfile "test_data/university.db.bak";\nmasters { 192.168.11.37; };\ncheck-names ignore; ' \
+            '};\n' \
+            'zone "smtp.university.edu" { ' \
+            'type master;\nfile "test_data/test_zone.db";\nmasters { 192.168.11.37; }; ' \
+            '};\n' \
+            'zone "." { type hint;\nfile "named.ca"; }; ' \
+            '};'
+            
+        self.assertEqual(strTest, strTarget)
+        
     def testMakeZoneViewOptions(self):
         self.assertEqual(
             iscpy.dns.MakeZoneViewOptions(iscpy.dns.MakeNamedDict(self.named_file)),
@@ -290,85 +362,6 @@ class TestNamedImport(unittest.TestCase):
                                     'match-clients { network-unauthorized; };\n'
                                     'additional-from-auth no;'}
             }
-            )
-
-    def testMakeNamedHeader(self):
-        self.assertEqual(
-            iscpy.dns.DumpNamedHeader(iscpy.dns.MakeNamedDict(self.named_file)),
-            'include "/etc/rndc.key";\n'
-            'logging { category "update-security" { "security"; };\n'
-                      'category "queries" { "query_logging"; };\n'
-                      'channel "query_logging" { syslog local5;\nseverity info; };\n'
-                      'category "client" { "null"; };\n'
-                      'channel "security" { file "/var/log/named-security.log" '
-                                           'versions 10 size 10m;\nprint-time '
-                                           'yes; }; };\n'
-            'options { directory "/var/domain";\nrecursion yes;\n'
-                      'allow-query { any; };\nmax-cache-size 512M; };\n'
-            'controls { inet * allow { control-hosts; } keys { rndc-key; }; '
-            '};'
-            )
-
-    def testMakeISC(self):
-        self.assertEqual(
-            iscpy.MakeISC(
-                {'level1': {'level2': {'level3': {'level4': {'test1': True, 'test2': True, 'test3': True}}}},
-                 'newarg': 'newval', 'new_stanza': {'test': True}
-                }
-                ),
-            'new_stanza { test; };\n'
-            'level1 { level2 { level3 { level4 { test1;\n'
-                                                'test3;\n'
-                                                'test2; }; }; }; };\n'
-            'newarg newval;'
-            )
-        self.assertEqual(
-            iscpy.MakeISC(iscpy.ParseISCString(self.named_file)),
-            'acl control-hosts { 127.0.0.1/32;\n'
-            '192.168.1.3/32; };\n'
-            'acl admin { 192.168.1.2/32;\n'
-            '192.168.1.4/32;\n'
-            '192.168.0.0/16; };\n'
-            'view "authorized" { zone "smtp.university.edu" { masters { 192.168.11.37; };\n'
-            'type master;\n'
-            'file "test_data/test_zone.db"; };\n'
-            'allow-query-cache { network-authorized; };\n'
-            'allow-recursion { network-authorized; };\n'
-            'recursion yes;\n'
-            'zone "university.edu" { check-names ignore;\n'
-            'masters { 192.168.11.37; };\n'
-            'type slave;\n'
-            'file "test_data/university.db.bak"; };\n'
-            'match-clients { network-authorized; };\n'
-            'zone "." { type hint;\n'
-            'file "named.ca"; };\n'
-            'additional-from-cache yes;\n'
-            'additional-from-auth yes; };\n'
-            'controls { inet * allow { control-hosts; } keys { rndc-key; }; };\n'
-            'view "unauthorized" { zone "1.210.128.in-addr.arpa" { allow-query { network-unauthorized; };\n'
-            'type master;\n'
-            'file "test_data/test_reverse_zone.db"; };\n'
-            'recursion no;\n'
-            'match-clients { network-unauthorized; };\n'
-            'zone "." { type hint;\n'
-            'file "named.ca"; };\n'
-            'zone "0.0.127.in-addr.arpa" { masters { 192.168.1.3; };\n'
-            'type slave;\n'
-            'file "test_data/university.rev.bak"; };\n'
-            'additional-from-cache no;\n'
-            'additional-from-auth no; };\n'
-            'logging { category "update-security" { "security"; };\n'
-            'category "queries" { "query_logging"; };\n'
-            'channel "query_logging" { syslog local5;\n'
-            'severity info; };\n'
-            'category "client" { "null"; };\n'
-            'channel "security" { file "/var/log/named-security.log" versions 10 size 10m;\n'
-            'print-time yes; }; };\n'
-            'include "/etc/rndc.key";\n'
-            'options { directory "/var/domain";\n'
-            'recursion yes;\n'
-            'allow-query { any; };\n'
-            'max-cache-size 512M; };'
             )
 
 if __name__ == '__main__':
