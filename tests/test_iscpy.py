@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 # Copyright (c) 2009, Purdue University
 # All rights reserved.
@@ -43,11 +43,11 @@ __version__ = '1.8.1'
 import unittest
 import iscpy
 
-from os import path as osPath
+from pathlib import Path, PurePath
 
 
-NAMED_FILE = osPath.join(
-    osPath.dirname(osPath.abspath(__file__)),
+NAMED_FILE = PurePath(
+    Path(__file__).absolute().parent,
     'test_data/named.example.conf'
     )
 

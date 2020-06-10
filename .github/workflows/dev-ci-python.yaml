@@ -12,10 +12,8 @@ jobs:
   test:
     runs-on: ubuntu-latest
     strategy:
-      # You can use PyPy versions in python-version.
-      # For example, pypy2 and pypy3
       matrix:
-        python-version: [2.7, 3.5, 3.6, 3.7, 3.8]
+        python-version: [3.6, 3.7, 3.8]
 
     steps:
     - uses: actions/checkout@v2
@@ -30,6 +28,6 @@ jobs:
         python -c "import sys; print(sys.version)"
     - name: Run tests
       run: |
+        ls -lha
         python -m unittest tests/test_iscpy.py
-        
 
