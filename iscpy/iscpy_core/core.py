@@ -32,6 +32,7 @@
 import copy
 import pickle
 
+
 def ParseTokens(char_list):
     """Parses exploded isc named.conf portions.
     

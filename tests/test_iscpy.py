@@ -37,7 +37,7 @@ DO NOT EVER RUN THIS TEST AGAINST A PRODUCTION DATABASE.
 
 __copyright__ = 'Copyright (C) 2009, Purdue University'
 __license__ = 'BSD'
-__version__ = '1.18.1'
+__version__ = '1.8.1'
 
 
 import unittest
