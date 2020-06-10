@@ -36,15 +36,20 @@ DO NOT EVER RUN THIS TEST AGAINST A PRODUCTION DATABASE.
 """
 
 __copyright__ = 'Copyright (C) 2009, Purdue University'
-__license__ = 'BSD'
+__license__ = 'BSD-3-Clause'
 __version__ = '1.8.1'
 
 
 import unittest
 import iscpy
 
+from os import path as osPath
 
-NAMED_FILE = 'test_data/named.example.conf'
+
+NAMED_FILE = osPath.join(
+    osPath.dirname(osPath.abspath(__file__)),
+    'test_data/named.example.conf'
+    )
 
 
 class TestCreationFromStrings(unittest.TestCase):
