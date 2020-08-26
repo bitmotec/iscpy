@@ -2,21 +2,21 @@
 
 # Copyright (c) 2009, Purdue University
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # Redistributions of source code must retain the above copyright notice, this
 # list of conditions and the following disclaimer.
 #
 # Redistributions in binary form must reproduce the above copyright notice, this
 # list of conditions and the following disclaimer in the documentation and/or
 # other materials provided with the distribution.
-# 
+#
 # Neither the name of the Purdue University nor the names of its contributors
 # may be used to endorse or promote products derived from this software without
 # specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -39,16 +39,14 @@ __copyright__ = 'Copyright (C) 2009, Purdue University'
 __license__ = 'BSD-3-Clause'
 __version__ = '1.8.1'
 
-
 import unittest
 import iscpy
 
 from pathlib import Path, PurePath
 
-
-NAMED_FILE = PurePath(
+FILE_EXAMPLE_DNS = PurePath(
     Path(__file__).absolute().parent,
-    'test_data/named.example.conf'
+    'test_data/bind/example.named.conf'
     )
 
 
@@ -109,11 +107,11 @@ class TestCreationFromStrings(unittest.TestCase):
 
 class TestParsingFromFile(unittest.TestCase):
 
-    def setUp(self): 
-        with open(NAMED_FILE) as fp:
+    def setUp(self):
+        with open(FILE_EXAMPLE_DNS) as fp:
             self.named_file = fp.read()
-        
-        # Set maxDiff to None in order to display differences    
+
+        # Set maxDiff to None in order to display differences
         self.maxDiff = None
 
     def testScrubComments01(self):
@@ -164,7 +162,7 @@ class TestParsingFromFile(unittest.TestCase):
             '192.168.11.37;\n};\n};\n\nzone "." {\ntype hint;\n'
             'file "named.ca";\n};\n};\n\n'
             )
-        
+
     def testExplode(self):
         self.assertEqual(
             iscpy.Explode(self.named_file),
@@ -328,30 +326,33 @@ class TestParsingFromFile(unittest.TestCase):
             }
             )
 
+
 class TestGenerateFileContent(unittest.TestCase):
 
-    def setUp(self): 
-        with open(NAMED_FILE) as fp:
+    def setUp(self):
+        with open(FILE_EXAMPLE_DNS) as fp:
             self.named_file = fp.read()
-        
-        # Set maxDiff to None in order to display differences    
+
+        # Set maxDiff to None in order to display differences
         self.maxDiff = None
 
     def testMakeNamedHeader(self):
         self.assertEqual(
             iscpy.dns.DumpNamedHeader(iscpy.dns.MakeNamedDict(self.named_file)),
-            'include "/etc/rndc.key";\n'
-            'logging { category "update-security" { "security"; };\n'
-                      'category "queries" { "query_logging"; };\n'
-                      'channel "query_logging" { syslog local5;\nseverity info; };\n'
-                      'category "client" { "null"; };\n'
-                      'channel "security" { file "/var/log/named-security.log" '
+            'options { directory "/var/domain";\n'
+                      'recursion yes;\n'
+                      'allow-query { any; };\n'
+                      'max-cache-size 512M; };\n'
+            'logging { channel "security" { file "/var/log/named-security.log" '
                                            'versions 10 size 10m;\nprint-time '
-                                           'yes; }; };\n'
-            'options { directory "/var/domain";\nrecursion yes;\n'
-                      'allow-query { any; };\nmax-cache-size 512M; };\n'
-            'controls { inet * allow { control-hosts; } keys { rndc-key; }; '
-            '};'
+                                           'yes; };\n'
+                      'channel "query_logging" { syslog local5;\n'
+                                                'severity info; };\n'
+                      'category "client" { "null"; };\n'
+                      'category "update-security" { "security"; };\n'
+                      'category "queries" { "query_logging"; }; };\n'
+            'controls { inet * allow { control-hosts; } keys { rndc-key; }; };\n'
+            'include "/etc/rndc.key";'
             )
 
     def testMakeISC(self):
@@ -368,7 +369,7 @@ class TestGenerateFileContent(unittest.TestCase):
             'newarg newval;'
         strTest = iscpy.MakeISC(dicTest)
         self.assertEqual(strTest, strTarget)
-        
+
         strTest = iscpy.MakeISC(iscpy.ParseISCString(self.named_file))
         strTarget = \
             'options { directory "/var/domain";\nrecursion yes;\nallow-query { any; };\nmax-cache-size 512M; };\n' \
@@ -406,30 +407,35 @@ class TestGenerateFileContent(unittest.TestCase):
             '};\n' \
             'zone "." { type hint;\nfile "named.ca"; }; ' \
             '};'
-            
+
         self.assertEqual(strTest, strTarget)
-        
+
     def testMakeZoneViewOptions(self):
         self.assertEqual(
             iscpy.dns.MakeZoneViewOptions(iscpy.dns.MakeNamedDict(self.named_file)),
             {
-                'zones':
-                    {'university.edu':
-                        'masters { 192.168.11.37; };\n'
-                        'check-names ignore;',
-                     '0.0.127.in-addr.arpa': 'masters { 192.168.1.3; };',
-                     'smtp.university.edu': 'masters { 192.168.11.37; };',
-                     '1.210.128.in-addr.arpa': 'allow-query { network-unauthorized; };',
-                     '.': ''},
                 'views':
-                   {'authorized': 'allow-recursion { network-authorized; };\n'
-                                  'recursion yes;\nmatch-clients { '
-                                  'network-authorized; };\nallow-query-cache { '
-                                  'network-authorized; };\nadditional-from-cache '
-                                  'yes;\nadditional-from-auth yes;',
-                    'unauthorized': 'recursion no;\nadditional-from-cache no;\n'
-                                    'match-clients { network-unauthorized; };\n'
-                                    'additional-from-auth no;'}
+                    {
+                        'unauthorized': 'recursion no;\n'
+                                        'match-clients { network-unauthorized; };\n'
+                                        'additional-from-auth no;\n'
+                                        'additional-from-cache no;',
+                        'authorized':   'recursion yes;\n'
+                                        'match-clients { network-authorized; };\n'
+                                        'allow-recursion { network-authorized; };\n'
+                                        'allow-query-cache { network-authorized; };\n'
+                                        'additional-from-auth yes;\n'
+                                        'additional-from-cache yes;'
+                    },
+                'zones':
+                    {
+                        '0.0.127.in-addr.arpa': 'masters { 192.168.1.3; };',
+                        '1.210.128.in-addr.arpa': 'allow-query { network-unauthorized; };',
+                        '.' : '',
+                        'university.edu': 'masters { 192.168.11.37; };\n'
+                                          'check-names ignore;',
+                        'smtp.university.edu': 'masters { 192.168.11.37; };'
+                    }
             }
             )
 
