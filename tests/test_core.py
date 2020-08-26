@@ -266,66 +266,6 @@ class TestParsingFromFile(unittest.TestCase):
             }
             )
 
-    def testMakeNamedDict(self):
-        self.assertEqual(
-            iscpy.dns.MakeNamedDict(self.named_file),
-            {
-                'acls': {'admin': ['192.168.0.0/16', '192.168.1.2/32', '192.168.1.4/32'],
-                         'control-hosts': ['127.0.0.1/32', '192.168.1.3/32']},
-                'options': {'include': '"/etc/rndc.key"',
-                            'logging': {'category "update-security"':
-                                {'"security"': True},
-                                'category "queries"': {'"query_logging"': True},
-                                'channel "query_logging"':
-                                    {'syslog': 'local5', 'severity': 'info'},
-                                'category "client"': {'"null"': True},
-                                'channel "security"':
-                                {'file': '"/var/log/named-security.log" versions 10 size 10m',
-                                     'print-time': 'yes'}},
-                            'options': {'directory': '"/var/domain"',
-                                        'recursion': 'yes',
-                                        'allow-query': {'any': True},
-                                        'max-cache-size': '512M'},
-                            'controls': [{'inet * allow': {'control-hosts': True}},
-                                         {'keys': {'rndc-key': True}}]},
-                'orphan_zones': {},
-                'views':
-                    {'authorized': {'zones':
-                        {'university.edu':
-                            {'type': 'slave',
-                             'options': {'masters': {'192.168.11.37': True},
-                                         'check-names': 'ignore'},
-                             'file': 'test_data/university.db.bak'},
-                         'smtp.university.edu':
-                            {'type': 'master',
-                             'options': {'masters': {'192.168.11.37': True}},
-                             'file': 'test_data/test_zone.db'},
-                         '.':
-                            {'type': 'hint', 'options': {}, 'file': 'named.ca'}},
-                        'options': {'allow-recursion': {'network-authorized': True},
-                                    'recursion': 'yes',
-                                    'match-clients': {'network-authorized': True},
-                                    'allow-query-cache': {'network-authorized': True},
-                                    'additional-from-cache': 'yes',
-                                    'additional-from-auth': 'yes'}},
-                     'unauthorized': {'zones':
-                        {'0.0.127.in-addr.arpa':
-                            {'type': 'slave',
-                             'options': {'masters': {'192.168.1.3': True}},
-                             'file': 'test_data/university.rev.bak'},
-                         '1.210.128.in-addr.arpa':
-                            {'type': 'master',
-                             'options': {'allow-query':
-                                 {'network-unauthorized': True}},
-                             'file': 'test_data/test_reverse_zone.db'},
-                         '.':
-                            {'type': 'hint', 'options': {}, 'file': 'named.ca'}},
-                     'options': {'recursion': 'no', 'additional-from-cache': 'no',
-                                 'match-clients': {'network-unauthorized': True},
-                                 'additional-from-auth': 'no'}}}
-            }
-            )
-
 
 class TestGenerateFileContent(unittest.TestCase):
 
@@ -335,25 +275,6 @@ class TestGenerateFileContent(unittest.TestCase):
 
         # Set maxDiff to None in order to display differences
         self.maxDiff = None
-
-    def testMakeNamedHeader(self):
-        self.assertEqual(
-            iscpy.dns.DumpNamedHeader(iscpy.dns.MakeNamedDict(self.named_file)),
-            'options { directory "/var/domain";\n'
-                      'recursion yes;\n'
-                      'allow-query { any; };\n'
-                      'max-cache-size 512M; };\n'
-            'logging { channel "security" { file "/var/log/named-security.log" '
-                                           'versions 10 size 10m;\nprint-time '
-                                           'yes; };\n'
-                      'channel "query_logging" { syslog local5;\n'
-                                                'severity info; };\n'
-                      'category "client" { "null"; };\n'
-                      'category "update-security" { "security"; };\n'
-                      'category "queries" { "query_logging"; }; };\n'
-            'controls { inet * allow { control-hosts; } keys { rndc-key; }; };\n'
-            'include "/etc/rndc.key";'
-            )
 
     def testMakeISC(self):
         dicTest = {
@@ -409,35 +330,6 @@ class TestGenerateFileContent(unittest.TestCase):
             '};'
 
         self.assertEqual(strTest, strTarget)
-
-    def testMakeZoneViewOptions(self):
-        self.assertEqual(
-            iscpy.dns.MakeZoneViewOptions(iscpy.dns.MakeNamedDict(self.named_file)),
-            {
-                'views':
-                    {
-                        'unauthorized': 'recursion no;\n'
-                                        'match-clients { network-unauthorized; };\n'
-                                        'additional-from-auth no;\n'
-                                        'additional-from-cache no;',
-                        'authorized':   'recursion yes;\n'
-                                        'match-clients { network-authorized; };\n'
-                                        'allow-recursion { network-authorized; };\n'
-                                        'allow-query-cache { network-authorized; };\n'
-                                        'additional-from-auth yes;\n'
-                                        'additional-from-cache yes;'
-                    },
-                'zones':
-                    {
-                        '0.0.127.in-addr.arpa': 'masters { 192.168.1.3; };',
-                        '1.210.128.in-addr.arpa': 'allow-query { network-unauthorized; };',
-                        '.' : '',
-                        'university.edu': 'masters { 192.168.11.37; };\n'
-                                          'check-names ignore;',
-                        'smtp.university.edu': 'masters { 192.168.11.37; };'
-                    }
-            }
-            )
 
 
 if __name__ == '__main__':
