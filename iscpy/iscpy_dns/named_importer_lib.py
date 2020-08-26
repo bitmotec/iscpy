@@ -28,19 +28,19 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-
 import copy
 import iscpy
 
+
 def MakeNamedDict(named_string, IncludeFileAccess=""):
     """Makes a more organized named specific dict from parsed_dict
-    
+
     Inputs:
         named_string: string of named file
-    
+
     Outputs:
         dict: organized dict with keys views options and acls
-        
+
        { 'acls': {'acl1': ['10.1.0/32', '10.1.1/32']},
         'views': {'view1': {'zones': {'test_zone': {'file': '/path/to/zonefile',
                                                    'type': 'master',
@@ -48,32 +48,32 @@ def MakeNamedDict(named_string, IncludeFileAccess=""):
                            'options': 'view_options'}}
                            }
     """
-    
+
     named_string = iscpy.ScrubComments(named_string)
     parsed_dict = copy.deepcopy(iscpy.ParseTokens(iscpy.Explode(named_string)))
     named_data = {'acls': {}, 'views': {}, 'options': {}, 'orphan_zones': {}}
     for key in parsed_dict:
-        if( key.startswith('acl') ):
+        if(key.startswith('acl')):
             named_data['acls'][key.split()[1]] = []
             for cidr in parsed_dict[key]:
                 named_data['acls'][key.split()[1]].append(cidr)
-        elif( key.startswith('view') ):
+        elif(key.startswith('view')):
             view_name = key.split()[1].strip('"').strip()
             named_data['views'][view_name] = {'zones': {}, 'options': {}}
             for view_key in parsed_dict[key]:
-                if( view_key.startswith('zone') ):
+                if(view_key.startswith('zone')):
                     zone_name = view_key.split()[1].strip('"').strip()
                     named_data['views'][view_name]['zones'][zone_name] = (
                         {'options': {}, 'file': ''}
                         )
                     for zone_key in parsed_dict[key][view_key]:
-                        if( zone_key.startswith('file') ):
+                        if(zone_key.startswith('file')):
                             named_data['views'][view_name] \
                                 ['zones'][zone_name]['file'] = (
                                     parsed_dict[key][view_key] \
                                     [zone_key].strip('"').strip()
                                     )
-                        elif( zone_key.startswith('type') ):
+                        elif(zone_key.startswith('type')):
                             named_data['views'][view_name] \
                                 ['zones'][zone_name]['type'] = (
                                     parsed_dict[key][view_key] \
@@ -87,16 +87,16 @@ def MakeNamedDict(named_string, IncludeFileAccess=""):
                     named_data['views'][view_name]['options'][view_key] = (
                       parsed_dict[key][view_key]
                       )
-        elif( key.startswith('zone') ):
+        elif(key.startswith('zone')):
             zone_name = key.split()[1].strip('"').strip()
             named_data['orphan_zones'][zone_name] = (
                 {'options': {}, 'file': ''}
                 )
             for zone_key in parsed_dict[key]:
-                if( zone_key.startswith('file') ):
+                if(zone_key.startswith('file')):
                     named_data['orphan_zones'][zone_name]['file'] = (
                         parsed_dict[key][zone_key].strip('"').strip())
-                elif( zone_key.startswith('type') ):
+                elif(zone_key.startswith('type')):
                     named_data['orphan_zones'][zone_name]['type'] = (
                         parsed_dict[key][zone_key].strip('"').strip())
                 else:
@@ -107,16 +107,17 @@ def MakeNamedDict(named_string, IncludeFileAccess=""):
 
     return named_data
 
+
 def MakeZoneViewOptions(named_data):
     """Makes zone and view data into strings to load into database.
-    
+
     Inputs:
         named_data: named dict from MakeNamedDict
-    
+
     Outputs:
         dict: dict with keys {'views': {}, 'zones': {}}
     """
-    
+
     options_dict = {'views':{}, 'zones': {}}
     for view in named_data['views']:
         options_dict['views'][view] = iscpy.MakeISC(
@@ -132,28 +133,30 @@ def MakeZoneViewOptions(named_data):
             )
     return options_dict
 
+
 def DumpNamedHeader(named_data):
     """This function dumps the named header from a named_data dict
-    
+
     Inputs:
         named_data: named dict from MakeNamedDict
-    
+
     Outputs:
-        str: stirng of named header
+        str: string of named header
     """
-    
+
     return iscpy.MakeISC(named_data['options'])
+
 
 def MergeOrphanZones(named_data, view):
     """Merges orphaned zones into regular zones in named_data
-    
+
     Inputs:
         named_data: named dict from MakeNamedDict
         view: string of view name
     """
-    
+
     for zone in named_data['orphan_zones']:
-        if( view not in named_data['views'] ):
+        if(view not in named_data['views']):
             named_data['views'][view] = {'zones': {}, 'options': {}}
         named_data['views'][view]['zones'][zone] = \
             named_data['orphan_zones'][zone]

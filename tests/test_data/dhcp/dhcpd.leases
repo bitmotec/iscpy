@@ -1,0 +1,470 @@
+# The format of this file is documented in the dhcpd.leases(5) manual page.
+# This lease file was written by isc-dhcp-4.4.1
+
+# authoring-byte-order entry is generated, DO NOT DELETE
+authoring-byte-order little-endian;
+
+lease 192.168.6.119 {
+  starts 3 2020/01/29 21:19:08;
+  ends 3 2020/01/29 23:19:08;
+  tstp 3 2020/01/29 23:19:08;
+  cltt 3 2020/01/29 21:19:08;
+  binding state free;
+  hardware ethernet 00:00:00:00:00:00
+  uid "\001@I\0175\011\020";
+}
+lease 192.168.6.118 {
+  starts 0 2020/03/01 13:30:08;
+  ends 0 2020/03/01 15:30:08;
+  tstp 0 2020/03/01 15:30:08;
+  cltt 0 2020/03/01 13:30:08;
+  binding state free;
+  hardware ethernet 00:00:00:00:00:00
+  uid "\001P\004\270N{+";
+  set vendor-class-identifier = "HUAWEI:android:hi6250";
+}
+lease 192.168.6.101 {
+  starts 3 2020/04/01 13:41:58;
+  ends 3 2020/04/01 15:41:58;
+  tstp 3 2020/04/01 15:41:58;
+  cltt 3 2020/04/01 13:41:58;
+  binding state free;
+  hardware ethernet 00:00:00:00:00:00
+  uid "\377\3424?>\000\002\000\000\253\021\371\262S\014\327\353\334\274";
+}
+lease 192.168.6.123 {
+  starts 3 2020/04/01 16:37:12;
+  ends 3 2020/04/01 18:37:12;
+  tstp 3 2020/04/01 18:37:12;
+  cltt 3 2020/04/01 16:37:12;
+  binding state free;
+  hardware ethernet 00:00:00:00:00:00
+  uid "\377\3424?>\000\002\000\000\253\021#\200F\340$\273(G";
+  set vendor-class-identifier = "d-i";
+}
+lease 192.168.6.126 {
+  starts 3 2020/04/01 19:09:47;
+  ends 3 2020/04/01 19:11:47;
+  tstp 3 2020/04/01 19:11:47;
+  cltt 3 2020/04/01 19:09:47;
+  binding state free;
+  hardware ethernet 00:00:00:00:00:00
+  set vendor-class-identifier = "d-i";
+}
+lease 192.168.6.106 {
+  starts 3 2020/04/01 18:55:17;
+  ends 3 2020/04/01 20:55:17;
+  tstp 3 2020/04/01 20:55:17;
+  cltt 3 2020/04/01 18:55:17;
+  binding state free;
+  hardware ethernet 00:00:00:00:00:00
+  uid "\377\3424?>\000\002\000\000\253\021\256Wr\302\331\241>\267";
+  set vendor-class-identifier = "d-i";
+}
+lease 192.168.6.128 {
+  starts 4 2020/04/02 09:55:13;
+  ends 4 2020/04/02 09:57:13;
+  tstp 4 2020/04/02 09:57:13;
+  cltt 4 2020/04/02 09:55:13;
+  binding state free;
+  hardware ethernet 00:00:00:00:00:00
+  set vendor-class-identifier = "d-i";
+}
+lease 192.168.6.124 {
+  starts 4 2020/04/02 09:16:54;
+  ends 4 2020/04/02 11:16:54;
+  tstp 4 2020/04/02 11:16:54;
+  cltt 4 2020/04/02 09:16:54;
+  binding state free;
+  hardware ethernet 00:00:00:00:00:00
+  uid "\377\3424?>\000\002\000\000\253\021\024\024E\342\370\207\027\007";
+}
+lease 192.168.6.108 {
+  starts 4 2020/04/02 13:02:54;
+  ends 4 2020/04/02 13:04:54;
+  tstp 4 2020/04/02 13:04:54;
+  cltt 4 2020/04/02 13:02:54;
+  binding state free;
+  hardware ethernet 00:00:00:00:00:00
+  set vendor-class-identifier = "d-i";
+}
+lease 192.168.6.127 {
+  starts 4 2020/04/02 12:10:43;
+  ends 4 2020/04/02 14:10:43;
+  tstp 4 2020/04/02 14:10:43;
+  cltt 4 2020/04/02 12:33:26;
+  binding state free;
+  hardware ethernet 00:00:00:00:00:00
+  uid "\377\3424?>\000\002\000\000\253\021*\317\320\274\372z+\250";
+  set vendor-class-identifier = "d-i";
+}
+lease 192.168.6.113 {
+  starts 5 2020/04/03 11:46:53;
+  ends 5 2020/04/03 11:48:53;
+  tstp 5 2020/04/03 11:48:53;
+  cltt 5 2020/04/03 11:46:53;
+  binding state free;
+  hardware ethernet 00:00:00:00:00:00
+  set vendor-class-identifier = "d-i";
+}
+lease 192.168.6.125 {
+  starts 5 2020/04/03 11:33:48;
+  ends 5 2020/04/03 13:33:48;
+  tstp 5 2020/04/03 13:33:48;
+  cltt 5 2020/04/03 11:33:48;
+  binding state free;
+  hardware ethernet 00:00:00:00:00:00
+  uid "\377\3424?>\000\002\000\000\253\021=\036\321!\010\304\371\334";
+}
+lease 192.168.6.109 {
+  starts 5 2020/04/03 13:15:52;
+  ends 5 2020/04/03 15:15:52;
+  tstp 5 2020/04/03 15:15:52;
+  cltt 5 2020/04/03 13:15:52;
+  binding state free;
+  hardware ethernet 00:00:00:00:00:00
+  uid "\377\3424?>\000\002\000\000\253\021\237\244\202G\225\235\240C";
+  set vendor-class-identifier = "d-i";
+}
+lease 192.168.6.122 {
+  starts 1 2020/04/13 13:10:10;
+  ends 1 2020/04/13 15:10:10;
+  tstp 1 2020/04/13 15:10:10;
+  cltt 1 2020/04/13 13:10:10;
+  binding state free;
+  hardware ethernet 00:00:00:00:00:00
+  uid "\001\214\365\243\265\203\205";
+  set vendor-class-identifier = "android-dhcp-8.0.0";
+}
+lease 192.168.6.112 {
+  starts 4 2020/04/23 13:04:36;
+  ends 4 2020/04/23 13:05:42;
+  tstp 4 2020/04/23 13:05:42;
+  cltt 4 2020/04/23 13:04:36;
+  binding state free;
+  hardware ethernet 00:00:00:00:00:00
+  uid "\377\3424?>\000\002\000\000\253\021\245\235qP{\305\321Q";
+}
+lease 192.168.6.121 {
+  starts 4 2020/04/23 13:32:44;
+  ends 4 2020/04/23 13:34:44;
+  tstp 4 2020/04/23 13:34:44;
+  cltt 4 2020/04/23 13:32:44;
+  binding state free;
+  hardware ethernet 00:00:00:00:00:00
+  set vendor-class-identifier = "d-i";
+}
+lease 192.168.6.129 {
+  starts 4 2020/04/23 11:45:59;
+  ends 4 2020/04/23 13:45:59;
+  tstp 4 2020/04/23 13:45:59;
+  cltt 4 2020/04/23 12:00:42;
+  binding state free;
+  hardware ethernet 00:00:00:00:00:00
+  uid "\377\3424?>\000\002\000\000\253\021\330\350\\\312\350S\205\264";
+}
+lease 192.168.6.102 {
+  starts 4 2020/04/23 13:32:44;
+  ends 4 2020/04/23 15:32:44;
+  tstp 4 2020/04/23 15:32:44;
+  cltt 4 2020/04/23 13:32:44;
+  binding state free;
+  hardware ethernet 00:00:00:00:00:00
+  set vendor-class-identifier = "d-i";
+}
+lease 192.168.6.103 {
+  starts 1 2020/04/27 07:42:51;
+  ends 1 2020/04/27 07:44:51;
+  tstp 1 2020/04/27 07:44:51;
+  cltt 1 2020/04/27 07:42:51;
+  binding state free;
+  hardware ethernet 00:00:00:00:00:00
+  set vendor-class-identifier = "d-i";
+}
+lease 192.168.6.111 {
+  starts 1 2020/04/27 11:44:28;
+  ends 1 2020/04/27 13:44:28;
+  tstp 1 2020/04/27 13:44:28;
+  cltt 1 2020/04/27 11:44:28;
+  binding state free;
+  hardware ethernet 00:00:00:00:00:00
+  uid "\377\3424?>\000\002\000\000\253\021\177\014\216\243\245\012\367\202";
+}
+lease 192.168.6.110 {
+  starts 2 2020/05/19 13:21:09;
+  ends 2 2020/05/19 15:21:09;
+  tstp 2 2020/05/19 15:21:09;
+  cltt 2 2020/05/19 13:21:09;
+  binding state free;
+  hardware ethernet 00:00:00:00:00:00
+  uid "\001@\241\010\224\033\361";
+  set vendor-class-identifier = "android-dhcp-9";
+}
+lease 192.168.6.117 {
+  starts 2 2020/05/26 08:18:45;
+  ends 2 2020/05/26 10:18:45;
+  tstp 2 2020/05/26 10:18:45;
+  cltt 2 2020/05/26 08:18:45;
+  binding state free;
+  hardware ethernet 00:00:00:00:00:00
+  uid "\377\3424?>\000\002\000\000\253\021\242\330\262\312\214H\364\211";
+}
+lease 192.168.6.114 {
+  starts 1 2020/06/08 15:35:51;
+  ends 1 2020/06/08 16:17:31;
+  tstp 1 2020/06/08 16:17:31;
+  cltt 1 2020/06/08 15:35:51;
+  binding state free;
+  hardware ethernet 00:00:00:00:00:00
+  uid "\377\3424?>\000\002\000\000\253\021\335n\000\354\341\376y\030";
+}
+lease 192.168.6.104 {
+  starts 4 2020/06/11 12:05:27;
+  ends 4 2020/06/11 14:05:27;
+  tstp 4 2020/06/11 14:05:27;
+  cltt 4 2020/06/11 12:05:27;
+  binding state free;
+  hardware ethernet 00:00:00:00:00:00
+  uid "\001\024\366\330\262G=";
+  set vendor-class-identifier = "MSFT 5.0";
+}
+lease 192.168.6.120 {
+  starts 1 2020/06/15 15:51:18;
+  ends 1 2020/06/15 17:51:18;
+  tstp 1 2020/06/15 17:51:18;
+  cltt 1 2020/06/15 16:05:15;
+  binding state free;
+  hardware ethernet 00:00:00:00:00:00
+  uid "\001\330\313\212\350\026\314";
+  set vendor-class-identifier = "MSFT 5.0";
+}
+lease 192.168.6.105 {
+  starts 3 2020/06/17 18:31:57;
+  ends 3 2020/06/17 20:31:57;
+  tstp 3 2020/06/17 20:31:57;
+  cltt 3 2020/06/17 18:31:57;
+  binding state free;
+  hardware ethernet 00:00:00:00:00:00
+  uid "\001\320w\0249\003I";
+  set vendor-class-identifier = "android-dhcp-9";
+}
+lease 192.168.6.107 {
+  starts 3 2020/06/17 20:02:18;
+  ends 3 2020/06/17 22:02:18;
+  tstp 3 2020/06/17 22:02:18;
+  cltt 3 2020/06/17 20:02:18;
+  binding state free;
+  hardware ethernet 00:00:00:00:00:00
+  uid "\001\230;\026\333&)";
+  set vendor-class-identifier = "dhcpcd-5.5.6";
+}
+lease 192.168.6.115 {
+  starts 5 2020/06/19 10:23:04;
+  ends 5 2020/06/19 12:23:04;
+  cltt 5 2020/06/19 10:23:04;
+  binding state active;
+  next binding state free;
+  rewind binding state free;
+  hardware ethernet 00:00:00:00:00:00
+  uid "\001\000+gQ\237j";
+  set vendor-class-identifier = "MSFT 5.0";
+  client-hostname "BMT-Av-LL";
+}
+lease 192.168.6.116 {
+  starts 5 2020/06/19 10:29:13;
+  ends 5 2020/06/19 12:29:13;
+  cltt 5 2020/06/19 10:29:13;
+  binding state active;
+  next binding state free;
+  rewind binding state free;
+  hardware ethernet 00:00:00:00:00:00
+  uid "\001\254Wu+\221\216";
+  set vendor-class-identifier = "android-dhcp-10";
+}
+lease 192.168.1.115 {
+  starts 6 2019/10/12 18:18:53;
+  ends 6 2019/10/12 21:56:55;
+  tstp 6 2019/10/12 21:56:55;
+  cltt 6 2019/10/12 18:18:53;
+  binding state free;
+  hardware ethernet 00:00:00:00:00:00
+  uid "\001\350\232\217\354F\331";
+}
+lease 192.168.1.116 {
+  starts 2 2019/10/29 18:05:14;
+  ends 2 2019/10/29 22:05:14;
+  tstp 2 2019/10/29 22:05:14;
+  cltt 2 2019/10/29 18:05:14;
+  binding state free;
+  hardware ethernet 00:00:00:00:00:00
+  uid "\001p\205\302\311Sj";
+  set vendor-class-identifier = "MSFT 5.0";
+}
+lease 192.168.1.119 {
+  starts 2 2019/11/05 21:32:31;
+  ends 3 2019/11/06 01:32:31;
+  tstp 3 2019/11/06 01:32:31;
+  cltt 2 2019/11/05 21:32:31;
+  binding state free;
+  hardware ethernet 00:00:00:00:00:00
+}
+lease 192.168.1.109 {
+  starts 2 2019/12/17 20:05:57;
+  ends 2 2019/12/17 20:08:41;
+  tstp 2 2019/12/17 20:08:41;
+  cltt 2 2019/12/17 20:05:57;
+  binding state free;
+  hardware ethernet 00:00:00:00:00:00
+  uid "\001\334\2462&\347\254";
+}
+lease 192.168.1.102 {
+  starts 6 2019/12/21 16:05:31;
+  ends 6 2019/12/21 17:04:06;
+  tstp 6 2019/12/21 17:04:06;
+  cltt 6 2019/12/21 16:05:31;
+  binding state free;
+  hardware ethernet 00:00:00:00:00:00
+  uid "\001\254\344\265\265\035\236";
+}
+lease 192.168.1.103 {
+  starts 6 2019/12/21 16:40:39;
+  ends 6 2019/12/21 20:40:39;
+  tstp 6 2019/12/21 20:40:39;
+  cltt 6 2019/12/21 17:20:43;
+  binding state free;
+  hardware ethernet 00:00:00:00:00:00
+  uid "\001p\354\344\247\011Y";
+}
+lease 192.168.1.104 {
+  starts 2 2019/12/31 12:45:50;
+  ends 2 2019/12/31 13:11:20;
+  tstp 2 2019/12/31 13:11:20;
+  cltt 2 2019/12/31 12:45:50;
+  binding state free;
+  hardware ethernet 00:00:00:00:00:00
+  uid "\001\270'\353_\236\374";
+}
+lease 192.168.1.118 {
+  starts 6 2020/01/04 10:51:50;
+  ends 6 2020/01/04 14:51:50;
+  tstp 6 2020/01/04 14:51:50;
+  cltt 6 2020/01/04 11:39:08;
+  binding state free;
+  hardware ethernet 00:00:00:00:00:00
+  uid "\001\000$\326\012\260\"";
+  set vendor-class-identifier = "MSFT 5.0";
+}
+lease 192.168.1.101 {
+  starts 6 2020/01/18 17:57:20;
+  ends 6 2020/01/18 21:57:20;
+  tstp 6 2020/01/18 21:57:20;
+  cltt 6 2020/01/18 18:08:57;
+  binding state free;
+  hardware ethernet 00:00:00:00:00:00
+  uid "\001\034\260\224\033\360B";
+  set vendor-class-identifier = "android-dhcp-7.1.2";
+}
+lease 192.168.1.105 {
+  starts 5 2020/02/21 15:50:19;
+  ends 5 2020/02/21 19:50:19;
+  tstp 5 2020/02/21 19:50:19;
+  cltt 5 2020/02/21 16:17:07;
+  binding state free;
+  hardware ethernet 00:00:00:00:00:00
+  uid "\001H\272N(&\361";
+}
+lease 192.168.1.108 {
+  starts 6 2020/04/04 17:42:11;
+  ends 6 2020/04/04 18:55:52;
+  tstp 6 2020/04/04 18:55:52;
+  cltt 6 2020/04/04 17:42:11;
+  binding state free;
+  hardware ethernet 00:00:00:00:00:00
+  uid "\001\324\201\327\007\223\306";
+}
+lease 192.168.1.111 {
+  starts 2 2020/04/07 06:36:48;
+  ends 2 2020/04/07 10:36:48;
+  tstp 2 2020/04/07 10:36:48;
+  cltt 2 2020/04/07 06:36:48;
+  binding state free;
+  hardware ethernet 00:00:00:00:00:00
+}
+lease 192.168.1.112 {
+  starts 4 2020/04/09 12:36:48;
+  ends 4 2020/04/09 12:39:51;
+  tstp 4 2020/04/09 12:39:51;
+  cltt 4 2020/04/09 12:36:48;
+  binding state free;
+  hardware ethernet 00:00:00:00:00:00
+  uid "\001\000\016\306\311\320\005";
+}
+lease 192.168.1.106 {
+  starts 4 2020/04/09 12:01:35;
+  ends 4 2020/04/09 16:01:35;
+  tstp 4 2020/04/09 16:01:35;
+  cltt 4 2020/04/09 12:01:35;
+  binding state free;
+  hardware ethernet 00:00:00:00:00:00
+  uid "\001H_\231L\037\337";
+  set vendor-class-identifier = "MSFT 5.0";
+}
+lease 192.168.1.107 {
+  starts 1 2020/04/13 14:56:48;
+  ends 1 2020/04/13 18:56:48;
+  tstp 1 2020/04/13 18:56:48;
+  cltt 1 2020/04/13 14:56:48;
+  binding state free;
+  hardware ethernet 00:00:00:00:00:00
+  uid "\001\214\365\243\265\203\205";
+  set vendor-class-identifier = "android-dhcp-8.0.0";
+}
+lease 192.168.1.113 {
+  starts 6 2020/04/18 12:49:07;
+  ends 6 2020/04/18 16:49:07;
+  tstp 6 2020/04/18 16:49:07;
+  cltt 6 2020/04/18 13:22:27;
+  binding state free;
+  hardware ethernet 00:00:00:00:00:00
+}
+lease 192.168.1.110 {
+  starts 4 2020/05/07 11:06:20;
+  ends 4 2020/05/07 13:06:30;
+  tstp 4 2020/05/07 13:06:30;
+  cltt 4 2020/05/07 11:06:20;
+  binding state free;
+  hardware ethernet 00:00:00:00:00:00
+  uid "\001\344\271z\277\200\015";
+}
+lease 192.168.1.114 {
+  starts 3 2020/05/27 15:19:27;
+  ends 3 2020/05/27 19:19:27;
+  tstp 3 2020/05/27 19:19:27;
+  cltt 3 2020/05/27 15:19:27;
+  binding state free;
+  hardware ethernet 00:00:00:00:00:00
+  uid "\001\010\000'\204\020\250";
+  set vendor-class-identifier = "MSFT 5.0";
+}
+lease 192.168.1.117 {
+  starts 2 2020/06/16 15:41:55;
+  ends 2 2020/06/16 19:41:55;
+  tstp 2 2020/06/16 19:41:55;
+  cltt 2 2020/06/16 15:41:55;
+  binding state free;
+  hardware ethernet 00:00:00:00:00:00
+  uid "\001\302\217\243q\373\331";
+  set vendor-class-identifier = "android-dhcp-10";
+}
+lease 192.168.6.115 {
+  starts 5 2020/06/19 11:23:04;
+  ends 5 2020/06/19 13:23:04;
+  cltt 5 2020/06/19 11:23:04;
+  binding state active;
+  next binding state free;
+  rewind binding state free;
+  hardware ethernet 00:00:00:00:00:00
+  uid "\001\000+gQ\237j";
+  set vendor-class-identifier = "MSFT 5.0";
+  client-hostname "BMT-Av-LL";
+}

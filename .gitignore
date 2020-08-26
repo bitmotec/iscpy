@@ -14,7 +14,9 @@
 
 # Ignore setting files
 *.conf
+!tests/**/*.conf
 *.ini
+!tests/**/*.ini
 
 # Ignore cache folder
 /.cache
@@ -23,7 +25,6 @@
 /.venv
 
 # Ignore binaries and build folders
-build/*
-dist/*
-*.egg-info/*
-*.bin
+build
+dist
+*.egg-info
