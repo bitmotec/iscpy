@@ -1,0 +1,58 @@
+# The format of this file is documented in the dhcpd.leases(5) manual page.
+# This lease file was written by isc-dhcp-4.4.1
+
+# authoring-byte-order entry is generated, DO NOT DELETE
+authoring-byte-order little-endian;
+
+lease 192.168.6.123 {
+  starts 3 2020/04/01 16:37:12;
+  ends 3 2020/04/01 18:37:12;
+  tstp 3 2020/04/01 18:37:12;
+  cltt 3 2020/04/01 16:37:12;
+  binding state free;
+  hardware ethernet 00:00:00:00:00:00;
+  uid "\377\3424?>\000\002\000\000\253\021#\200F\340$\273(G";
+  set vendor-class-identifier = "d-i";
+}
+lease 192.168.6.114 {
+  starts 1 2020/06/08 15:35:51;
+  ends 1 2020/06/08 16:17:31;
+  tstp 1 2020/06/08 16:17:31;
+  cltt 1 2020/06/08 15:35:51;
+  binding state free;
+  hardware ethernet 00:00:00:00:00:00;
+  uid "\377\3424?>\000\002\000\000\253\021\335n\000\354\341\376y\030";
+}
+lease 192.168.6.107 {
+  starts 3 2020/06/17 20:02:18;
+  ends 3 2020/06/17 22:02:18;
+  tstp 3 2020/06/17 22:02:18;
+  cltt 3 2020/06/17 20:02:18;
+  binding state free;
+  hardware ethernet 00:00:00:00:00:00;
+  uid "\001\230;\026\333&)";
+  set vendor-class-identifier = "dhcpcd-5.5.6";
+}
+lease 192.168.6.116 {
+  starts 5 2020/06/19 10:29:13;
+  ends 5 2020/06/19 12:29:13;
+  cltt 5 2020/06/19 10:29:13;
+  binding state active;
+  next binding state free;
+  rewind binding state free;
+  hardware ethernet 00:00:00:00:00:00;
+  uid "\001\254Wu+\221\216";
+  set vendor-class-identifier = "android-dhcp-10";
+}
+lease 192.168.6.115 {
+  starts 5 2020/06/19 11:23:04;
+  ends 5 2020/06/19 13:23:04;
+  cltt 5 2020/06/19 11:23:04;
+  binding state active;
+  next binding state free;
+  rewind binding state free;
+  hardware ethernet 00:00:00:00:00:00;
+  uid "\001\000+gQ\237j";
+  set vendor-class-identifier = "MSFT 5.0";
+  client-hostname "Example Name";
+}
