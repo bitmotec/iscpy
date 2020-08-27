@@ -16,7 +16,239 @@ FILE_EXAMPLE_DHCP_LEASES = PurePath(
     )
 
 
-class TestLeaseFileCreationFromStrings(unittest.TestCase):
+class TestDHCPDConfParsingFromString(unittest.TestCase):
+
+    def setUp(self):
+
+        self.strTestContent = (
+            'option domain-name "local";\n'
+            'default-lease-time 3600; # [s]\n'
+            'max-lease-time 28800; # [s]\n'
+            'authoritative;\n'
+            '# Test Comment\n'
+            'subnet 192.168.1.0 netmask 255.255.255.0 {\n'
+                'interface eth0;\n'
+                'option routers 192.168.1.1;\n'
+                'pool {\n'
+                    'option domain-name-servers 192.168.1.1;\n'
+                    'max-lease-time 300; # [s]\n'
+                    'range 192.168.1.2 192.168.1.254; } }\n'
+            'subnet 192.168.2.0 netmask 255.255.255.252 {\n'
+                'interface eth1;\n'
+                'option routers 192.168.2.1;\n'
+                'pool {\n'
+                    'option domain-name-servers 192.168.2.1;\n'
+                    'max-lease-time 300; # [s]\n'
+                    'range 192.168.2.2 192.168.2.2; } }\n'
+            )
+
+        self.maxDiff = None
+
+    def testParse(self):
+
+        lstTarget = [
+            'option domain-name "local"', ';',
+            'default-lease-time 3600', ';',
+            'max-lease-time 28800', ';',
+            'authoritative', ';',
+            'subnet 192.168.1.0 netmask 255.255.255.0', '{',
+                'interface eth0', ';',
+                'option routers 192.168.1.1', ';',
+                'pool', '{',
+                    'option domain-name-servers 192.168.1.1', ';',
+                    'max-lease-time 300', ';',
+                    'range 192.168.1.2 192.168.1.254', ';',
+                    '}',
+                '}',
+            'subnet 192.168.2.0 netmask 255.255.255.252', '{',
+                'interface eth1', ';',
+                'option routers 192.168.2.1', ';',
+                'pool', '{',
+                    'option domain-name-servers 192.168.2.1', ';',
+                    'max-lease-time 300', ';',
+                    'range 192.168.2.2 192.168.2.2', ';',
+                    '}',
+                '}'
+            ]
+
+        lstTest = iscpy.Explode(iscpy.ScrubComments(self.strTestContent))
+
+        self.assertEqual(lstTest, lstTarget)
+
+        dicTarget = {
+            'option': 'domain-name "local"',
+            'default-lease-time': '3600',
+            'max-lease-time': '28800',
+            'authoritative': True,
+            'subnet 192.168.1.0 netmask 255.255.255.0': {
+                'interface': 'eth0',
+                'option': 'routers 192.168.1.1',
+                'pool': {
+                    'option': 'domain-name-servers 192.168.1.1',
+                    'max-lease-time': '300',
+                    'range': '192.168.1.2 192.168.1.254'
+                    }
+                },
+            'subnet 192.168.2.0 netmask 255.255.255.252': {
+                'interface': 'eth1',
+                'option': 'routers 192.168.2.1',
+                'pool': {
+                    'option': 'domain-name-servers 192.168.2.1',
+                    'max-lease-time': '300',
+                    'range': '192.168.2.2 192.168.2.2'
+                    }
+                }
+            }
+
+        dicTest = iscpy.ParseISCString(iscpy.ScrubComments(self.strTestContent))
+
+        self.assertEqual(dicTest, dicTarget)
+
+
+class TestDHCPDConfParsingFromFile(unittest.TestCase):
+
+    def setUp(self):
+        with open(FILE_EXAMPLE_DHCP_CONF) as fp:
+            self.strDHCPFileContent = fp.read()
+
+        # Set maxDiff to None in order to display differences
+        self.maxDiff = None
+
+    def testParse(self):
+
+        lstTarget = [
+            'option domain-name "local"', ';',
+            'default-lease-time 3600', ';',
+            'max-lease-time 28800', ';',
+            'ddns-update-style none', ';',
+            'authoritative', ';',
+            'subnet 192.168.1.0 netmask 255.255.255.0', '{',
+                'interface eth0', ';',
+                'option routers 192.168.1.1', ';',
+                'pool', '{',
+                    'option domain-name-servers 192.168.1.1', ';',
+                    'max-lease-time 300', ';',
+                    'range 192.168.1.2 192.168.1.254', ';',
+                    '}',
+                '}',
+            'subnet 192.168.2.0 netmask 255.255.255.252', '{',
+                'interface eth1', ';',
+                'option routers 192.168.2.1', ';',
+                'pool', '{',
+                    'option domain-name-servers 192.168.2.1', ';',
+                    'max-lease-time 300', ';',
+                    'range 192.168.2.2 192.168.2.2', ';',
+                    '}',
+                '}',
+            'subnet 10.1.1.0 netmask 255.255.255.0', '{',
+                'interface wlan0', ';',
+                'option routers 10.1.1.1', ';',
+                'pool', '{',
+                    'option domain-name-servers 10.1.1.1', ';',
+                    'max-lease-time 43200', ';',
+                    'range 10.1.1.2 10.1.1.100', ';',
+                    'deny unknown-clients', ';',
+                    '}',
+                'pool', '{',
+                    'max-lease-time 3600', ';',
+                    'range 10.1.1.200 10.1.1.249', ';',
+                    'allow unknown-clients', ';',
+                    '}',
+                '}'
+            ]
+
+        lstTest = iscpy.Explode(iscpy.ScrubComments(self.strDHCPFileContent))
+
+        self.assertEqual(lstTest, lstTarget)
+
+        dicTarget = {
+            'option': 'domain-name "local"',
+            'default-lease-time': '3600',
+            'max-lease-time': '28800',
+            'ddns-update-style': 'none',
+            'authoritative': True,
+            'subnet 192.168.1.0 netmask 255.255.255.0': {
+                'interface': 'eth0',
+                'option': 'routers 192.168.1.1',
+                'pool': {
+                    'option': 'domain-name-servers 192.168.1.1',
+                    'max-lease-time': '300',
+                    'range': '192.168.1.2 192.168.1.254'
+                    }
+                },
+            'subnet 192.168.2.0 netmask 255.255.255.252': {
+                'interface': 'eth1',
+                'option': 'routers 192.168.2.1',
+                'pool': {
+                    'option': 'domain-name-servers 192.168.2.1',
+                    'max-lease-time': '300',
+                    'range': '192.168.2.2 192.168.2.2'
+                    }
+                },
+            'subnet 10.1.1.0 netmask 255.255.255.0': {
+                'interface': 'wlan0',
+                'option': 'routers 10.1.1.1',
+                'pool': {
+                    'max-lease-time': '43200',
+                    'range': '10.1.1.2 10.1.1.100',
+                    'deny': 'unknown-clients'
+                    },
+                'pool': {
+                    'max-lease-time': '3600',
+                    'range': '10.1.1.200 10.1.1.249',
+                    'allow': 'unknown-clients'
+                    }
+                }
+            }
+
+        dicTest = iscpy.ParseISCString(self.strDHCPFileContent)
+
+        self.assertEqual(dicTest, dicTarget)
+
+
+class TestDHCPDConfGenerateFileContent(unittest.TestCase):
+
+    def setUp(self):
+        with open(FILE_EXAMPLE_DHCP_LEASES) as fp:
+            self.strLeaseFileContent = fp.read()
+
+        # Set maxDiff to None in order to display differences
+        self.maxDiff = None
+
+    def testMakeISC(self):
+
+        strTraget = (
+            'option domain-name "local";\n'
+            'default-lease-time 3600;\n'
+            'authoritative;\n'
+            'subnet 192.168.1.0 netmask 255.255.255.0 { interface eth0;\n'
+            'option routers 192.168.1.1;\n'
+            'pool { option domain-name-servers 192.168.1.1;\n'
+            'max-lease-time 300;\n'
+            'range 192.168.1.2 192.168.1.254; } }\n'
+            )
+
+        dicTest = {
+            'option': 'domain-name "local"',
+            'default-lease-time': '3600',
+            'authoritative': True,
+            'subnet 192.168.1.0 netmask 255.255.255.0': {
+                'interface': 'eth0',
+                'option': 'routers 192.168.1.1',
+                'pool': {
+                    'option': 'domain-name-servers 192.168.1.1',
+                    'max-lease-time': '300',
+                    'range': '192.168.1.2 192.168.1.254'
+                    }
+                }
+            }
+
+        strTest = iscpy.MakeISC(dicTest, terminate_curly_brackets=False)
+
+        self.assertEqual(strTest, strTraget)
+
+
+class TestLeaseParsingFromString(unittest.TestCase):
 
     def setUp(self):
 

@@ -61,7 +61,8 @@ class TestCreationFromStrings(unittest.TestCase):
         self.maxDiff = None
 
     def testSingleOption(self):
-        test_string = (
+
+        strTest = (
             'single-option;\n'
             'boolean-option yes;\n'
             'options {};\n'
@@ -69,8 +70,8 @@ class TestCreationFromStrings(unittest.TestCase):
             )
 
         self.assertEqual(
-            iscpy.Deserialize(iscpy.Serialize(test_string)),
-            'single-option ;\n'
+            iscpy.Deserialize(iscpy.Serialize(strTest)),
+            'single-option;\n'
             'boolean-option yes;\n'
             'options {  };\n'
             'list-option { a;\n'
