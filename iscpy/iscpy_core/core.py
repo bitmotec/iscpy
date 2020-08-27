@@ -91,7 +91,10 @@ def ParseTokens(char_list):
                 dictionary_fragment[key] = copy.deepcopy(
                     ParseTokens(dict_value)
                     )
-            if key.startswith('lease'):
+            if (key.startswith('lease') \
+                or key.startswith('subnet ') \
+                or key.startswith('pool')
+                ):
                 skip += 2
             index += skip
         else:
@@ -115,7 +118,7 @@ def ParseTokens(char_list):
             # ex "recursion;" (not a valid option, but for example's sake it's fine)
             elif(new_char_list[index] not in ['{', ';', '}']):
                 key = new_char_list[index]
-                dictionary_fragment[key] = ''
+                dictionary_fragment[key] = True
                 index += 1
             index += 1
 
@@ -360,10 +363,14 @@ def MakeISC(isc_dict, terminate=True, terminate_curly_brackets=True, end_with_ne
                 continue
             isc_list.append(f'{option} {{ {" ".join(new_list)} }}{terminator}')
         elif type(isc_dict[option]) == dict:
+            strSubDic = MakeISC(isc_dict[option],
+                    terminate_curly_brackets=terminate_curly_brackets,
+                    end_with_newline=False
+                    )
             if not terminate_curly_brackets:
-                isc_list.append(f'{option} {{ {MakeISC(isc_dict[option], end_with_newline=False)} }}')
+                isc_list.append(f'{option} {{ {strSubDic} }}')
                 continue
-            isc_list.append(f'{option} {{ {MakeISC(isc_dict[option], end_with_newline=False)} }}{terminator}')
+            isc_list.append(f'{option} {{ {strSubDic} }}{terminator}')
     if end_with_newline:
         return '\n'.join(isc_list) + '\n'
     return '\n'.join(isc_list)
