@@ -145,7 +145,7 @@ class TestGenerateFileContent(unittest.TestCase):
                       'category "update-security" { "security"; };\n'
                       'category "queries" { "query_logging"; }; };\n'
             'controls { inet * allow { control-hosts; } keys { rndc-key; }; };\n'
-            'include "/etc/rndc.key";'
+            'include "/etc/rndc.key";\n'
             )
 
     def testMakeZoneViewOptions(self):
@@ -157,22 +157,22 @@ class TestGenerateFileContent(unittest.TestCase):
                         'unauthorized': 'recursion no;\n'
                                         'match-clients { network-unauthorized; };\n'
                                         'additional-from-auth no;\n'
-                                        'additional-from-cache no;',
+                                        'additional-from-cache no;\n',
                         'authorized':   'recursion yes;\n'
                                         'match-clients { network-authorized; };\n'
                                         'allow-recursion { network-authorized; };\n'
                                         'allow-query-cache { network-authorized; };\n'
                                         'additional-from-auth yes;\n'
-                                        'additional-from-cache yes;'
+                                        'additional-from-cache yes;\n'
                     },
                 'zones':
                     {
-                        '0.0.127.in-addr.arpa': 'masters { 192.168.1.3; };',
-                        '1.210.128.in-addr.arpa': 'allow-query { network-unauthorized; };',
-                        '.' : '',
+                        '0.0.127.in-addr.arpa': 'masters { 192.168.1.3; };\n',
+                        '1.210.128.in-addr.arpa': 'allow-query { network-unauthorized; };\n',
+                        '.' : '\n',
                         'university.edu': 'masters { 192.168.11.37; };\n'
-                                          'check-names ignore;',
-                        'smtp.university.edu': 'masters { 192.168.11.37; };'
+                                          'check-names ignore;\n',
+                        'smtp.university.edu': 'masters { 192.168.11.37; };\n'
                     }
             }
             )

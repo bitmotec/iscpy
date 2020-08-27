@@ -53,63 +53,81 @@ FILE_EXAMPLE_DNS = PurePath(
 class TestCreationFromStrings(unittest.TestCase):
 
     def setUp(self):
-        self.named_file = (
-            'include "/home/jcollins/roster-dns-management/test/test_data/rndc.key";'
-            'options { pid-file "test_data/named.pid";};\n'
-            'controls { inet 127.0.0.1 port 35638 allow{localhost;} keys {rndc-key;};};'
+        self.strFileContent = (
+            'include "/home/jcollins/roster-dns-management/test/test_data/rndc.key";\n'
+            'options { pid-file "test_data/named.pid"; };\n'
+            'controls { inet 127.0.0.1 port 35638 allow { localhost; } keys { rndc-key; }; };\n'
             )
         self.maxDiff = None
 
     def testSingleOption(self):
         test_string = (
-            u'single-option;\n'
-            u'boolean-option yes;\n'
-            u'options {};\n'
-            u'list-option { a; b; };\n'
+            'single-option;\n'
+            'boolean-option yes;\n'
+            'options {};\n'
+            'list-option { a; b; };\n'
             )
 
         self.assertEqual(
             iscpy.Deserialize(iscpy.Serialize(test_string)),
-            u'single-option ;\n'
-            u'boolean-option yes;\n'
-            u'options {  };\n'
-            u'list-option { a;\n'
-            u'b; };'
+            'single-option ;\n'
+            'boolean-option yes;\n'
+            'options {  };\n'
+            'list-option { a;\n'
+            'b; };\n'
             )
 
     def testParse(self):
-        self.assertEqual(
-            iscpy.Explode(iscpy.ScrubComments(self.named_file)),
-            ['include "/home/jcollins/roster-dns-management/test/test_data/rndc.key"',
-             ';', 'options', '{', 'pid-file "test_data/named.pid"', ';', '}', ';',
-             'controls', '{', 'inet 127.0.0.1 port 35638 allow', '{', 'localhost',
-             ';', '}', 'keys', '{', 'rndc-key', ';', '}', ';', '}', ';']
-            )
-        self.assertEqual(
-            iscpy.ParseISCString(self.named_file),
-            {
-                'include': '"/home/jcollins/roster-dns-management/test/test_data/rndc.key"',
-                'options': {'pid-file': '"test_data/named.pid"'},
-                'controls':
-                    [
-                        {'inet 127.0.0.1 port 35638 allow': {'localhost': True}},
-                        {'keys': {'rndc-key': True}}
-                    ]
+
+        lstTarget = [
+            'include "/home/jcollins/roster-dns-management/test/test_data/rndc.key"', ';',
+            'options', '{',
+                'pid-file "test_data/named.pid"', ';',
+                '}', ';',
+            'controls', '{',
+                'inet 127.0.0.1 port 35638 allow', '{',
+                    'localhost', ';',
+                    '}',
+                'keys', '{',
+                    'rndc-key', ';',
+                    '}', ';',
+                '}', ';'
+            ]
+
+        lstTest = iscpy.Explode(iscpy.ScrubComments(self.strFileContent))
+
+        self.assertEqual(lstTest, lstTarget)
+
+        dicTarget = {
+            'include': '"/home/jcollins/roster-dns-management/test/test_data/rndc.key"',
+            'options': {'pid-file': '"test_data/named.pid"'},
+            'controls':
+                [
+                    {'inet 127.0.0.1 port 35638 allow': {'localhost': True}},
+                    {'keys': {'rndc-key': True}}
+                ]
             }
-            )
-        self.assertEqual(
-            iscpy.MakeISC(iscpy.ParseISCString(self.named_file)),
+
+        dicTest = iscpy.ParseISCString(self.strFileContent)
+
+        self.assertEqual(dicTest, dicTarget)
+
+        strTarget = (
             'include "/home/jcollins/roster-dns-management/test/test_data/rndc.key";\n'
             'options { pid-file "test_data/named.pid"; };\n'
-            'controls { inet 127.0.0.1 port 35638 allow { localhost; } keys { rndc-key; }; };'
+            'controls { inet 127.0.0.1 port 35638 allow { localhost; } keys { rndc-key; }; };\n'
             )
+
+        strTest = iscpy.MakeISC(iscpy.ParseISCString(self.strFileContent))
+
+        self.assertEqual(strTest, strTarget)
 
 
 class TestParsingFromFile(unittest.TestCase):
 
     def setUp(self):
         with open(FILE_EXAMPLE_DNS) as fp:
-            self.named_file = fp.read()
+            self.strFileContent = fp.read()
 
         # Set maxDiff to None in order to display differences
         self.maxDiff = None
@@ -124,8 +142,8 @@ class TestParsingFromFile(unittest.TestCase):
         self.assertEqual(iscpy.ScrubComments("/*\n*\n*\n*/foobar"), "foobar")
 
     def testScrubComments04(self):
-        self.assertEqual(
-            iscpy.ScrubComments(self.named_file),
+
+        strTarget = (
             'options {\ndirectory "/var/domain";\nrecursion yes;\n'
             'allow-query { any; };\nmax-cache-size 512M;\n};\n\n'
             'logging {\nchannel "security" {\n'
@@ -163,9 +181,13 @@ class TestParsingFromFile(unittest.TestCase):
             'file "named.ca";\n};\n};\n\n'
             )
 
+        strTest = iscpy.ScrubComments(self.strFileContent)
+
+        self.assertEqual(strTest, strTarget)
+
     def testExplode(self):
         self.assertEqual(
-            iscpy.Explode(self.named_file),
+            iscpy.Explode(self.strFileContent),
             [
                 'options', '{', 'directory "/var/domain"', ';',
                 'recursion yes', ';', 'allow-query', '{', 'any', ';', '}',
@@ -220,7 +242,7 @@ class TestParsingFromFile(unittest.TestCase):
 
     def testParse(self):
         self.assertEqual(
-            iscpy.ParseTokens(iscpy.Explode(iscpy.ScrubComments(self.named_file))),
+            iscpy.ParseTokens(iscpy.Explode(iscpy.ScrubComments(self.strFileContent))),
             {
                 'acl control-hosts': {'127.0.0.1/32': True, '192.168.1.3/32': True},
                 'acl admin': {'192.168.1.2/32': True, '192.168.1.4/32': True,
@@ -271,7 +293,7 @@ class TestGenerateFileContent(unittest.TestCase):
 
     def setUp(self):
         with open(FILE_EXAMPLE_DNS) as fp:
-            self.named_file = fp.read()
+            self.strFileContent = fp.read()
 
         # Set maxDiff to None in order to display differences
         self.maxDiff = None
@@ -287,11 +309,12 @@ class TestGenerateFileContent(unittest.TestCase):
             'level1 { level2 { level3 { level4 { test1;\n' \
                                                 'test2;\n' \
                                                 'test3; }; }; }; };\n' \
-            'newarg newval;'
+            'newarg newval;\n'
         strTest = iscpy.MakeISC(dicTest)
+
         self.assertEqual(strTest, strTarget)
 
-        strTest = iscpy.MakeISC(iscpy.ParseISCString(self.named_file))
+        strTest = iscpy.MakeISC(iscpy.ParseISCString(self.strFileContent))
         strTarget = \
             'options { directory "/var/domain";\nrecursion yes;\nallow-query { any; };\nmax-cache-size 512M; };\n' \
             'logging { ' \
@@ -327,7 +350,7 @@ class TestGenerateFileContent(unittest.TestCase):
             'type master;\nfile "test_data/test_zone.db";\nmasters { 192.168.11.37; }; ' \
             '};\n' \
             'zone "." { type hint;\nfile "named.ca"; }; ' \
-            '};'
+            '};\n'
 
         self.assertEqual(strTest, strTarget)
 
