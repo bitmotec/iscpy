@@ -5,6 +5,7 @@
 
 # Ignore temporary files
 *.tmp
+*.coverage
 
 # Ignore local project settings
 /.project

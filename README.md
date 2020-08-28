@@ -1,21 +1,30 @@
-# python3-iscpy
+# ISCpy
 
-iscpy Python3 library. Reads and writes ISC-syled configuration files such as
-ISC BIND8/BIND9 and ISC-DHCP server/client.  Additional features such as adding zone and write to file
+ISCpy is a robust ISC config file parser.
+It reads and writes ISC-syled configuration files such as ISC BIND8/BIND9
+and ISC-DHCP server/client files among a few others.
+It has virtually unlimited possibilities for depth and quantity of these ISC config files.
+ISC config files include BIND and DHCP config files.
 
 ## Usage
 
 ```
-ParseISCString(isc_string)
+iscDictionary = ParseISCString(iscConfigString)
 ```
-Returns `parsed bind config file` in python dictionary format(ISC dictionary) and `keys` without childkeys e.g. include
+Returns the parsed ISC config file as a python dictionary in ISC dictionary format ( e.g. keys without childkeys or includes).
+
+
+```
+iscConfigString = MakeISC(iscDictionary)
+```
+Returns an ISC formatted file string which can be written back to the filesystem.
 
 ```
 AddZone(json_zone, isc_dict)
 ```
-Adding zone. Input is in json string. Returns ISC dictionary with added zone. This method doesn't include writing to output file
+Adds a zone to a parsed BIND config. Input is in JSON string. Returns ISC dictionary with added zone. This method doesn't include writing to an output file.
 
 ```
-WriteToFile(isc_dict, isc_specialkeys, filename)
+WriteToFile(iscDictionary, iscSpecialkeys, fullFilenameName)
 ```
-Write ISC dictionary to a file
+Writes the ISC dictionary to the given file.

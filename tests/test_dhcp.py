@@ -1,5 +1,7 @@
 #!/usr/bin/python3
 
+__version__ = "1.9.0"
+
 import unittest
 import iscpy
 

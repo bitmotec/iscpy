@@ -1,8 +1,17 @@
 
-MAIN DEVELOEPRS (Python3):
-Marc Averbeck
-Stephen Egbert
+# This is the list of ISCpy's significant contributors.
+#
+# This does not necessarily list everyone who has contributed code,
+# especially since many employees of one corporation may be contributing.
+# To see the full list of contributors, see the revision history in
+# source control.
+#
+# ISCpy was originally created in 2009 by Jacob C. Collins
+# at the Purdue University in West Lafayette, Indiana.
+#
 
-MAIN DEVELOEPRS (Python2):
-Jacob Collins
+Marc Averbeck <averbeck@bitmotec.com>
+Stephen Egbert
+Diastuti Utami <13514071@std.stei.itb.ac.id>
 John Pavlick
+Jacob C. Collins <jc@purdue.edu>

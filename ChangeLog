@@ -1,3 +1,12 @@
+
+Release 1.9.0
+- Dropped support for Python2 since it's EOL
+- Improved parser to handle isc-dhcp-server files
+
+Release 1.8.0
+- Switched to Python3
+- Added AddZone and WriteToFile
+
 Release 1.05
 - Fixed bug to allow for empty braces clauses
 
