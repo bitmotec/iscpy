@@ -22,6 +22,11 @@ FILE_SPECIAL_DHCP_LEASES = PurePath(
     'test_data/dhcp/special.dhcpd.leases'
     )
 
+FILE_SPECIAL_DHCP_LEASES2 = PurePath(
+    Path(__file__).absolute().parent,
+    'test_data/dhcp/special2.dhcpd.leases'
+    )
+
 class TestDHCPDConfParsingFromString(unittest.TestCase):
 
     def setUp(self):
@@ -358,6 +363,7 @@ class TestLeaseParsingFromString(unittest.TestCase):
 
         self.assertEqual(lstTest, lstTarget)
 
+
 class TestLeaseParsingFromFile(unittest.TestCase):
 
     def setUp(self):
@@ -367,6 +373,8 @@ class TestLeaseParsingFromFile(unittest.TestCase):
         with open(FILE_SPECIAL_DHCP_LEASES) as fp:
             self.strLeaseFileSpecialContent = fp.read()
 
+        with open(FILE_SPECIAL_DHCP_LEASES2) as fp:
+            self.strLeaseFileSpecialContent2 = fp.read()
 
         # Set maxDiff to None in order to display differences
         self.maxDiff = None
@@ -402,6 +410,34 @@ class TestLeaseParsingFromFile(unittest.TestCase):
         strTest = iscpy.MakeISC(dicTest, terminate_curly_brackets=False)
 
         self.assertEqual(strTest, strTarget)      
+
+        dicTarget = {
+            'lease 192.168.1.104': {
+                'starts': '2 2019/12/31 12:45:50',
+                'ends': '2 2019/12/31 13:11:20',
+                'tstp': '2 2019/12/31 13:11:20',
+                'cltt': '2 2019/12/31 12:45:50',
+                'binding': 'state free',
+                'hardware': 'ethernet 00:00:00:00:00:00',
+                'uid': '"\\001\\270\'\\353_\\236\\374"'
+                },
+            'lease 192.168.1.118': {
+                'starts': '6 2020/01/04 10:51:50',
+                'ends': '6 2020/01/04 14:51:50',
+                'tstp': '6 2020/01/04 14:51:50',
+                'cltt': '6 2020/01/04 11:39:08',
+                'binding': 'state free',
+                'hardware': 'ethernet 00:00:00:00:00:00',
+                'uid': r'"\001\000$\326\012\260\""',
+                'set' : 'vendor-class-identifier = "MSFT 5.0"'
+                }
+            }
+
+        strClean = iscpy.ScrubComments(self.strLeaseFileSpecialContent2)
+        lstTest = iscpy.Explode(strClean)
+        dicTest = iscpy.ParseTokens(lstTest)
+
+        self.assertEqual(dicTest, dicTarget)
 
     def testParse(self):
 

@@ -175,7 +175,7 @@ def Explode(isc_string):
             continue
         if not bInSingleQuote and not bInDoubleQuote and char == "'":
             # Check if quote is terminated
-            iPos, strType = _FindQuote(isc_string[iIndex + 1:])
+            iPos, strType = _FindQuote(isc_string[iIndex + 1:], "'")
             if iPos > 0 and strType == "'":
                 bInSingleQuote = True
                 temp_string.append(char)
@@ -187,7 +187,7 @@ def Explode(isc_string):
             continue
         if not bInDoubleQuote and not bInSingleQuote and char == '"':
             # Check if quote is terminated
-            iPos, strType = _FindQuote(isc_string[iIndex + 1:])
+            iPos, strType = _FindQuote(isc_string[iIndex + 1:], '"')
             if iPos > 0 and strType == '"':
                 bInDoubleQuote = True
                 temp_string.append(char)
@@ -321,7 +321,7 @@ def _FindQuote(strLine, charQuote=None):
     elif charQuote == "'":
         iQuoteStartSingle = strLine.find("'")
         iQuoteStartDouble = -1
-    elif charQuote is '"':
+    elif charQuote == '"':
         iQuoteStartSingle = -1
         iQuoteStartDouble = strLine.find('"')
 
