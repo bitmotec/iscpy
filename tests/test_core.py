@@ -53,11 +53,6 @@ FILE_EXAMPLE_DNS = PurePath(
 class TestCreationFromStrings(unittest.TestCase):
 
     def setUp(self):
-        self.strFileContent = (
-            'include "/home/jcollins/roster-dns-management/test/test_data/rndc.key";\n'
-            'options { pid-file "test_data/named.pid"; };\n'
-            'controls { inet 127.0.0.1 port 35638 allow { localhost; } keys { rndc-key; }; };\n'
-            )
         self.maxDiff = None
 
     def testSingleOption(self):
@@ -95,7 +90,13 @@ class TestCreationFromStrings(unittest.TestCase):
                 '}', ';'
             ]
 
-        lstTest = iscpy.Explode(iscpy.ScrubComments(self.strFileContent))
+        strTest = (
+            'include "/home/jcollins/roster-dns-management/test/test_data/rndc.key";\n'
+            'options { pid-file "test_data/named.pid"; };\n'
+            'controls { inet 127.0.0.1 port 35638 allow { localhost; } keys { rndc-key; }; };\n'
+            )
+
+        lstTest = iscpy.Explode(iscpy.ScrubComments(strTest))
 
         self.assertEqual(lstTest, lstTarget)
 
@@ -109,7 +110,7 @@ class TestCreationFromStrings(unittest.TestCase):
                 ]
             }
 
-        dicTest = iscpy.ParseISCString(self.strFileContent)
+        dicTest = iscpy.ParseISCString(strTest)
 
         self.assertEqual(dicTest, dicTarget)
 
@@ -119,10 +120,9 @@ class TestCreationFromStrings(unittest.TestCase):
             'controls { inet 127.0.0.1 port 35638 allow { localhost; } keys { rndc-key; }; };\n'
             )
 
-        strTest = iscpy.MakeISC(iscpy.ParseISCString(self.strFileContent))
+        strTest = iscpy.MakeISC(iscpy.ParseISCString(strTest))
 
         self.assertEqual(strTest, strTarget)
-
 
 class TestParsingFromFile(unittest.TestCase):
 
@@ -183,6 +183,14 @@ class TestParsingFromFile(unittest.TestCase):
             )
 
         strTest = iscpy.ScrubComments(self.strFileContent)
+
+        self.assertEqual(strTest, strTarget)
+
+    def testScrubComments05(self):
+
+        strTarget = 'option a1\'b2;'
+
+        strTest = iscpy.ScrubComments('option a1\'b2;#c3"67;')
 
         self.assertEqual(strTest, strTarget)
 

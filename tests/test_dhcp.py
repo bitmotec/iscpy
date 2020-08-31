@@ -17,6 +17,10 @@ FILE_EXAMPLE_DHCP_LEASES = PurePath(
     'test_data/dhcp/example.dhcpd.leases'
     )
 
+FILE_SPECIAL_DHCP_LEASES = PurePath(
+    Path(__file__).absolute().parent,
+    'test_data/dhcp/special.dhcpd.leases'
+    )
 
 class TestDHCPDConfParsingFromString(unittest.TestCase):
 
@@ -271,6 +275,57 @@ class TestLeaseParsingFromString(unittest.TestCase):
 
         self.maxDiff = None
 
+    def testQuotes(self):
+
+        dicTarget = {
+            'option': 'a1"b2#c3"'
+            }
+
+        strTest = 'option a1"b2#c3";'
+        dicTest = iscpy.ParseISCString(strTest)
+
+        self.assertEqual(dicTest, dicTarget)
+
+        dicTarget = {
+            'option': 'a1\'b2'
+            }
+
+        strTest = 'option a1\'b2;#c3"67;'
+        strClean = iscpy.ScrubComments(strTest)
+        dicTest = iscpy.ParseISCString(strClean)
+
+        self.assertEqual(dicTest, dicTarget)
+
+        dicTarget = {
+            'option': '"a1\'b2#c3\"67"'
+            }
+
+        strTest = 'option "a1\'b2#c3\"67";'
+        strClean = iscpy.ScrubComments(strTest)
+        dicTest = iscpy.ParseISCString(strClean)
+
+        self.assertEqual(dicTest, dicTarget)
+
+        dicTarget = {
+            'option': 'a1"b\'2#c3"'
+            }
+
+        strTest = 'option a1"b\'2#c3";'
+        dicTest = iscpy.ParseISCString(strTest)
+
+        self.assertEqual(dicTest, dicTarget)
+
+        dicTarget = {
+            'option': r'a1"b\"#$\'\""2'
+            }
+
+        strTest = r'option a1"b\"#$\'\""2; #TestComment'
+
+        strClean = iscpy.ScrubComments(strTest)
+        dicTest = iscpy.ParseISCString(strClean)
+
+        self.assertEqual(dicTest, dicTarget)
+
     def testParse(self):
 
         lstTarget = [
@@ -291,6 +346,17 @@ class TestLeaseParsingFromString(unittest.TestCase):
 
         self.assertEqual(lstTest, lstTarget)
 
+    def testParseStringWithSeperator(self):
+        
+        lstTarget = [
+            'uid "\\001\\230;\\026\\333&)"', ';'
+            ]
+        
+        strTest = 'uid "\\001\\230;\\026\\333&)";'
+         
+        lstTest = iscpy.Explode(iscpy.ScrubComments(strTest))
+
+        self.assertEqual(lstTest, lstTarget)
 
 class TestLeaseParsingFromFile(unittest.TestCase):
 
@@ -298,8 +364,44 @@ class TestLeaseParsingFromFile(unittest.TestCase):
         with open(FILE_EXAMPLE_DHCP_LEASES) as fp:
             self.strLeaseFileContent = fp.read()
 
+        with open(FILE_SPECIAL_DHCP_LEASES) as fp:
+            self.strLeaseFileSpecialContent = fp.read()
+
+
         # Set maxDiff to None in order to display differences
         self.maxDiff = None
+
+    def testQuotes(self):
+
+        dicTarget = {
+            'lease 192.168.1.118': {
+                'starts': '6 2020/01/04 10:51:50',
+                'ends': '6 2020/01/04 14:51:50',
+                'tstp': '6 2020/01/04 14:51:50',
+                'cltt': '6 2020/01/04 11:39:08',
+                'binding': 'state free',
+                'hardware': 'ethernet 00:00:00:00:00:00',
+                'uid': r'"\001\000$\326\012\260\""'
+                }
+            }
+
+        dicTest = iscpy.ParseISCString(self.strLeaseFileSpecialContent)
+
+        self.assertEqual(dicTest, dicTarget)
+
+        strTarget = (
+            'lease 192.168.1.118 { starts 6 2020/01/04 10:51:50;\n'
+                'ends 6 2020/01/04 14:51:50;\n'
+                'tstp 6 2020/01/04 14:51:50;\n'
+                'cltt 6 2020/01/04 11:39:08;\n'
+                'binding state free;\n'
+                'hardware ethernet 00:00:00:00:00:00;\n'
+                'uid ' r'"\001\000$\326\012\260\"";' ' }\n'
+            )
+
+        strTest = iscpy.MakeISC(dicTest, terminate_curly_brackets=False)
+
+        self.assertEqual(strTest, strTarget)      
 
     def testParse(self):
 

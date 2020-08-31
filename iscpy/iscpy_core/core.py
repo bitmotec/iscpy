@@ -167,25 +167,31 @@ def Explode(isc_string):
     temp_string = []
     bInSingleQuote = False
     bInDoubleQuote = False
-    for char in isc_string:
+    for iIndex, char in enumerate(isc_string):
         # Check for single quote
-        if bInSingleQuote and char == "'":
+        if bInSingleQuote and char == "'" and isc_string[iIndex -1] != "\\":
             bInSingleQuote = False
             temp_string.append(char)
             continue
         if not bInSingleQuote and not bInDoubleQuote and char == "'":
-            bInSingleQuote = True
-            temp_string.append(char)
-            continue
+            # Check if quote is terminated
+            iPos, strType = _FindQuote(isc_string[iIndex + 1:])
+            if iPos > 0 and strType == "'":
+                bInSingleQuote = True
+                temp_string.append(char)
+                continue
         # Check for double quote
-        if bInDoubleQuote and char == '"':
+        if bInDoubleQuote and char == '"' and isc_string[iIndex -1] != "\\":
             bInDoubleQuote = False
             temp_string.append(char)
             continue
         if not bInDoubleQuote and not bInSingleQuote and char == '"':
-            bInDoubleQuote = True
-            temp_string.append(char)
-            continue
+            # Check if quote is terminated
+            iPos, strType = _FindQuote(isc_string[iIndex + 1:])
+            if iPos > 0 and strType == '"':
+                bInDoubleQuote = True
+                temp_string.append(char)
+                continue
         # Keep quote
         if bInSingleQuote or bInDoubleQuote:
             if char in ['\n']:
@@ -273,18 +279,20 @@ def ScrubComments(isc_string):
                 iPosition = 0
                 # Check first appering quote
                 while True:
-                    iQuoteStart = line[iPosition:].find(charQuote)
+                    iQuoteStart, _ = _FindQuote(line[iPosition:], charQuote)
                     if iQuoteStart >= 0:
                         iQuoteStart += iPosition
-                        iQuoteEnd = line[iQuoteStart + 1:].find(charQuote) + iQuoteStart + 1
-                        try:
-                            if len(strTemp) == 0:
-                                strTemp += line[iPosition:iQuoteStart].split('#')[0].split('//')[0].lstrip()
-                            else:
-                                strTemp += line[iPosition:iQuoteStart].split('#')[0].split('//')[0]
-                        except ValueError:
-                            raise
-                            isc_list.append(line.split('#')[0].split('//')[0].strip())
+                        iQuoteEnd, _ = _FindQuote(line[iQuoteStart+1:], charQuote)
+                        iQuoteEnd += iQuoteStart + 1
+                        # Split string in front of quote on comment chars
+                        lstParts1 = line[iPosition:iQuoteStart].split('#')
+                        lstParts2 = lstParts1[0].split('//')
+                        if len(strTemp) == 0:
+                            strTemp += lstParts2[0].lstrip()
+                        else:
+                            strTemp += lstParts2[0]
+                        if (len(lstParts1) > 1 or len(lstParts2) > 1): # Rest of line is a comment
+                            isc_list.append(strTemp)
                             break
                         strTemp += line[iQuoteStart:iQuoteEnd + 1]
                         iPosition = iQuoteEnd + 1
@@ -304,24 +312,50 @@ def ScrubComments(isc_string):
     return '\n'.join(isc_list)
 
 
-def _FindQuote(strLine):
-    """
-
-    """
+def _FindQuote(strLine, charQuote=None):
 
     # Check for quote starts
-    iQuoteStartSingle = strLine.find("'")
-    iQuoteStartDouble = strLine.find('"')
+    if charQuote is None:
+        iQuoteStartSingle = strLine.find("'")
+        iQuoteStartDouble = strLine.find('"')
+    elif charQuote == "'":
+        iQuoteStartSingle = strLine.find("'")
+        iQuoteStartDouble = -1
+    elif charQuote is '"':
+        iQuoteStartSingle = -1
+        iQuoteStartDouble = strLine.find('"')
+
+    # Check if char was escaped
+    while iQuoteStartSingle > 1:
+        if strLine[iQuoteStartSingle-1] == '\\':
+            iIndex, strType = _FindQuote(strLine[iQuoteStartSingle+1:], "'")
+            if iIndex > -1 and strType == "'":
+                iQuoteStartSingle += iIndex
+            else:
+                iQuoteStartSingle = -1
+                break
+        break
+
+    while iQuoteStartDouble > 1:
+        if strLine[iQuoteStartDouble-1] == '\\':
+            iIndex, strType = _FindQuote(strLine[iQuoteStartDouble+1:], '"')
+            if iIndex > -1 and strType == '"':
+                iQuoteStartDouble += iIndex
+            else:
+                iQuoteStartDouble = -1
+                break
+        break
+
     # Found both
     if iQuoteStartSingle > 0 and iQuoteStartDouble > 0:
         if iQuoteStartSingle < iQuoteStartDouble:
             return iQuoteStartSingle, "'"
         return iQuoteStartDouble, '"'
     # Found single
-    if iQuoteStartSingle > 0:
+    if iQuoteStartSingle > -1:
         return iQuoteStartSingle, "'"
-    # Found single
-    if iQuoteStartDouble > 0:
+    # Found double
+    if iQuoteStartDouble > -1:
         return iQuoteStartDouble, '"'
     return -1, None
 
