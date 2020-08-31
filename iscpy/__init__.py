@@ -1,7 +1,3 @@
-#!/usr/bin/python
-
-from __future__ import absolute_import
-
 # Copyright (c) 2009, Purdue University
 # All rights reserved.
 #
@@ -30,21 +26,23 @@ from __future__ import absolute_import
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""Toplevel RosterCore API.  This presents entities to external consumers."""
-
 __copyright__ = 'Copyright (C) 2009, Purdue University'
 __license__ = 'BSD'
-__version__ = '1.05'
+__version__ = '1.9.0'
 
 
 from iscpy.iscpy_core.core import *
 import iscpy.iscpy_dns as dns
-# import iscpy.iscpy_core.core as core
-# import iscpy.iscpy_dns.named_importer_lib as dns
+import iscpy.iscpy_dhcp as dhcp
 
 
-__all__ = ['ParseTokens', 'Clip', 'Explode', 'ScrubComments', 'MakeISC',
-           'Parse', 'dns']
-
-
-# vi: set ai aw sw=2:
+__all__ = [
+    'ParseTokens',
+    'Clip',
+    'Explode',
+    'ScrubComments',
+    'MakeISC',
+    'Parse',
+    'dns',
+    'dhcp',
+    ]
